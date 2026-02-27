@@ -3,7 +3,8 @@ import '../../utils/app_localizations.dart';
 import '../task/task_creation_screen.dart';
 
 class PostTaskTab extends StatelessWidget {
-  const PostTaskTab({super.key});
+  final bool testModeBypass;
+  const PostTaskTab({super.key, this.testModeBypass = false});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class PostTaskTab extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const TaskCreationScreen()),
+                  MaterialPageRoute(builder: (_) => TaskCreationScreen(testModeBypass: testModeBypass)),
                 );
               },
               icon: const Icon(Icons.add),

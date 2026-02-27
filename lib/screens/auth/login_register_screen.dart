@@ -6,7 +6,8 @@ import '../home/home_dashboard.dart';
 import 'profile_setup_screen.dart';
 
 class LoginRegisterScreen extends StatefulWidget {
-  const LoginRegisterScreen({super.key});
+  final bool testModeBypass;
+  const LoginRegisterScreen({super.key, this.testModeBypass = false});
 
   @override
   State<LoginRegisterScreen> createState() => _LoginRegisterScreenState();
@@ -16,6 +17,22 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   final AuthService _auth = AuthService();
   bool _loading = false;
   String _error = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // TEST MODE BYPASS: Skip login screen and go directly to home
+    if (widget.testModeBypass) {
+      debugPrint('TEST_MODE_BYPASS: Skipping login screen, navigating to home');
+      Future.microtask(() {
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => HomeDashboard(testModeBypass: true)),
+          );
+        }
+      });
+    }
+  }
 
   Future<void> _signInWithGoogle() async {
     setState(() {
@@ -38,12 +55,13 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
               uid: user.uid,
               initialDisplayName: user.displayName,
               initialPhotoUrl: user.photoURL,
+              testModeBypass: widget.testModeBypass,
             ),
           ),
         );
       } else {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeDashboard()),
+          MaterialPageRoute(builder: (_) => HomeDashboard(testModeBypass: widget.testModeBypass)),
         );
       }
     } catch (e) {

@@ -10,7 +10,8 @@ import '../auth/login_register_screen.dart';
 import '../profile/profile_edit_screen.dart';
 
 class HomeDashboard extends StatefulWidget {
-  const HomeDashboard({super.key});
+  final bool testModeBypass;
+  const HomeDashboard({super.key, this.testModeBypass = false});
 
   @override
   State<HomeDashboard> createState() => _HomeDashboardState();
@@ -24,7 +25,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final tabs = [
-      PostTaskTab(key: ValueKey('post')),
+      PostTaskTab(key: ValueKey('post'), testModeBypass: widget.testModeBypass),
       BrowseTasksTab(key: ValueKey('browse')),
       MyTasksTab(key: ValueKey('mytasks')),
       _ProfileTab(auth: _auth),

@@ -16,22 +16,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'YOUR_ANDROID_API_KEY',
-    appId: 'YOUR_APP_ID',
-    messagingSenderId: 'YOUR_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-    authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
+    apiKey: 'AIzaSyAFf70-t2hJuNMm0p3CjATGKCWGLosNW_k',
+    appId: '1:700868166519:android:cba9bdb3c2bb9f6d9cd772',
+    messagingSenderId: '700868166519',
+    projectId: 'betegna-9bc61',
+    storageBucket: 'betegna-9bc61.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'YOUR_IOS_API_KEY',
-    appId: 'YOUR_IOS_APP_ID',
-    messagingSenderId: 'YOUR_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-    authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-    iosClientId: 'YOUR_IOS_CLIENT_ID',
+    apiKey: 'AIzaSyBbq-syGYok27ae5ttJSF_cq3lgH14sj3o',
+    appId: '1:700868166519:ios:e7020c3d6ccca2439cd772',
+    messagingSenderId: '700868166519',
+    projectId: 'betegna-9bc61',
+    storageBucket: 'betegna-9bc61.firebasestorage.app',
+    iosClientId: '700868166519-4uveg6bf4ul469ubuo4apnsorkaj5c9v.apps.googleusercontent.com',
     iosBundleId: 'com.betegna.betegna',
   );
+
 }

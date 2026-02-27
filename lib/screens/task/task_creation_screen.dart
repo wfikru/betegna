@@ -11,7 +11,8 @@ import '../../utils/app_localizations.dart';
 import '../../utils/task_categories.dart';
 
 class TaskCreationScreen extends StatefulWidget {
-  const TaskCreationScreen({super.key});
+  final bool testModeBypass;
+  const TaskCreationScreen({super.key, this.testModeBypass = false});
 
   @override
   State<TaskCreationScreen> createState() => _TaskCreationScreenState();
@@ -29,6 +30,9 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
   List<String> _photoUrls = [];
   bool _loading = false;
   String _error = '';
+  
+  // TEST MODE: Use a mock user ID when in test bypass mode
+  static const String _testModeUserId = 'test-user-12345';
 
   @override
   void dispose() {
@@ -101,17 +105,24 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
     }
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) {
-      setState(() => _error = 'Not logged in');
-      return;
+      // TEST MODE: Allow submission with mock user ID if in test bypass mode
+      if (!widget.testModeBypass) {
+        setState(() => _error = 'Not logged in');
+        return;
+      }
+      // Use mock user ID for testing
+      debugPrint('TEST_MODE_BYPASS: Using mock user ID for task creation');
     }
     setState(() {
       _loading = true;
       _error = '';
     });
     try {
+      // Use actual user ID or mock ID for testing
+      final finalUid = uid ?? _testModeUserId;
       final task = TaskModel(
         id: const Uuid().v4(),
-        clientId: uid,
+        clientId: finalUid,
         title: title,
         description: desc,
         categoryId: _categoryId,

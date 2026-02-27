@@ -12,12 +12,14 @@ class ProfileSetupScreen extends StatefulWidget {
   final String uid;
   final String? initialDisplayName;
   final String? initialPhotoUrl;
+  final bool testModeBypass;
 
   const ProfileSetupScreen({
     super.key,
     required this.uid,
     this.initialDisplayName,
     this.initialPhotoUrl,
+    this.testModeBypass = false,
   });
 
   @override
@@ -99,7 +101,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       await _auth.setUserProfile(user);
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeDashboard()),
+        MaterialPageRoute(builder: (_) => HomeDashboard(testModeBypass: widget.testModeBypass)),
       );
     } catch (e) {
       if (mounted) setState(() {

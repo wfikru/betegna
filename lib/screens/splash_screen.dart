@@ -6,7 +6,8 @@ import 'auth/login_register_screen.dart';
 import 'home/home_dashboard.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final bool testModeBypass;
+  const SplashScreen({super.key, this.testModeBypass = false});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -24,6 +25,16 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _checkAuth() async {
     await Future.delayed(const Duration(milliseconds: 1500));
     if (!mounted) return;
+    
+    // TEST MODE BYPASS: Skip login if testModeBypass is enabled
+    if (widget.testModeBypass) {
+      debugPrint('TEST_MODE_BYPASS: Skipping authentication, navigating to home');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => HomeDashboard(testModeBypass: true)),
+      );
+      return;
+    }
+    
     final user = _auth.currentUser;
     if (user != null) {
       Navigator.of(context).pushReplacement(
@@ -31,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     } else {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const LoginRegisterScreen()),
+        MaterialPageRoute(builder: (_) => LoginRegisterScreen(testModeBypass: widget.testModeBypass)),
       );
     }
   }
