@@ -28,8 +28,8 @@ You can find these values in the Firebase console under project settings.
 Run the app: `npm run dev`
 
 After starting the development server open the browser at `http://localhost:5173` (or the port shown by Vite).  
-The first time you visit the site you will be redirected to `/login`; create a user using the email/password form (the account is stored in your Firebase project).  
-Once authenticated you can post tasks, make offers, and view your profile.
+
+**Note:** Authentication is currently **bypassed** for testing. The app automatically logs in with a mock user (`test@example.com`) so you can immediately access all features. To re-enable Firebase authentication, uncomment the `useEffect` block in `src/lib/AuthContext.jsx` and remove the mock user initialization.
 
 The application uses the following Firestore collections – create them in your Firebase console or let them be created automatically when you perform actions:
 
@@ -40,12 +40,6 @@ The application uses the following Firestore collections – create them in your
 
 Fields are stored verbatim as shown in the UI code. You can read/write directly via the Firestore web console for inspection.
 
-**Publish your changes**
-
-Open [Base44.com](http://Base44.com) and click on Publish.
-
 **Docs & Support**
 
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
-
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+For Firebase setup and Firestore documentation: [https://firebase.google.com/docs](https://firebase.google.com/docs)
