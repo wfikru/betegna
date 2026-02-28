@@ -1,0 +1,35 @@
+{
+  "name": "Review",
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "ID of the completed task"
+    },
+    "reviewer_email": {
+      "type": "string",
+      "description": "Email of the reviewer"
+    },
+    "reviewer_name": {
+      "type": "string",
+      "description": "Name of the reviewer"
+    },
+    "reviewee_email": {
+      "type": "string",
+      "description": "Email of the person being reviewed"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Rating from 1 to 5"
+    },
+    "comment": {
+      "type": "string",
+      "description": "Review comment"
+    }
+  },
+  "required": [
+    "task_id",
+    "reviewee_email",
+    "rating"
+  ]
+}

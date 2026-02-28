@@ -1,0 +1,50 @@
+{
+  "name": "TaskOffer",
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "ID of the task being offered on"
+    },
+    "task_title": {
+      "type": "string",
+      "description": "Title of the task"
+    },
+    "tasker_email": {
+      "type": "string",
+      "description": "Email of the tasker making the offer"
+    },
+    "tasker_name": {
+      "type": "string",
+      "description": "Name of the tasker"
+    },
+    "price": {
+      "type": "number",
+      "description": "Proposed price in ETB"
+    },
+    "message": {
+      "type": "string",
+      "description": "Message from the tasker"
+    },
+    "estimated_hours": {
+      "type": "number",
+      "description": "Estimated hours to complete"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "rejected",
+        "withdrawn"
+      ],
+      "default": "pending",
+      "description": "Status of the offer"
+    }
+  },
+  "required": [
+    "task_id",
+    "price",
+    "message"
+  ]
+}
