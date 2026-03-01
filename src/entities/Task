@@ -85,6 +85,15 @@
       "default": "open",
       "description": "Current status of the task"
     },
+    "created_by": {
+      "type": "string",
+      "description": "Email of the user who posted the task"
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO timestamp when task was created"
+    },
     "assigned_to": {
       "type": "string",
       "description": "Email of the assigned tasker"
@@ -105,6 +114,8 @@
   "required": [
     "title",
     "description",
-    "category"
+    "category",
+    "created_by",
+    "created_date"
   ]
 }

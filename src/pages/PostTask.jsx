@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/firebaseClient";
 import { createPageUrl } from "@/utils";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Calendar, DollarSign, Tag, CheckCircle } from "lucide-react";
 import { taskCategories } from "@/components/shared/CategoryBadge";
+import LoginModal from "@/components/LoginModal";
 
 export default function PostTask() {
   const navigate = useNavigate();
@@ -34,19 +35,32 @@ export default function PostTask() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.title || !form.description) return;
+    if (!form.title || !form.description || !form.budget_min || !form.budget_max) return;
     setLoading(true);
-    await base44.entities.Task.create({
-      ...form,
-      budget_min: form.budget_min ? Number(form.budget_min) : undefined,
-      budget_max: form.budget_max ? Number(form.budget_max) : undefined,
-      poster_name: user?.full_name || user?.email || "Anonymous",
-      status: "open",
-    });
-    setLoading(false);
-    setSuccess(true);
-    setTimeout(() => navigate(createPageUrl("MyTasks")), 2000);
+    try {
+      await api.entities.Task.create({
+        ...form,
+        budget_min: Number(form.budget_min),
+        budget_max: Number(form.budget_max),
+        poster_name: user?.full_name || user?.email || "Anonymous",
+        created_by: user?.email || "",
+        status: "open",
+      });
+      setSuccess(true);
+      setTimeout(() => navigate(createPageUrl("MyTasks")), 2000);
+    } catch (err) {
+      console.error("failed to post task", err);
+      // optionally show toast/error message here
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (!user) {
+    return (
+      <LoginModal onCancel={() => navigate(createPageUrl("BrowseTasks"))} />
+    );
+  }
 
   if (success) {
     return (
@@ -100,15 +114,25 @@ export default function PostTask() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="description">Description *</Label>
+              <div className="flex items-center justify-between mb-1">
+                <Label htmlFor="description">Description *</Label>
+                <span className="text-xs text-gray-500">
+                  {form.description.length}/500
+                </span>
+              </div>
               <Textarea
                 id="description"
                 placeholder="Describe the task in detail..."
                 value={form.description}
-                onChange={(e) => set("description", e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 500) {
+                    set("description", e.target.value);
+                  }
+                }}
                 required
                 rows={4}
                 className="mt-1"
+                maxLength={500}
               />
             </div>
           </CardContent>
@@ -122,24 +146,28 @@ export default function PostTask() {
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="budget_min">Min</Label>
+              <Label htmlFor="budget_min">Min *</Label>
               <Input
                 id="budget_min"
                 type="number"
                 placeholder="100"
                 value={form.budget_min}
                 onChange={(e) => set("budget_min", e.target.value)}
+                required
+                min="0"
                 className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="budget_max">Max</Label>
+              <Label htmlFor="budget_max">Max *</Label>
               <Input
                 id="budget_max"
                 type="number"
                 placeholder="500"
                 value={form.budget_max}
                 onChange={(e) => set("budget_max", e.target.value)}
+                required
+                min="0"
                 className="mt-1"
               />
             </div>

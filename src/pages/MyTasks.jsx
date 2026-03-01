@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/firebaseClient";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -53,8 +53,11 @@ function TaskCard({ task }) {
 }
 
 export default function MyTasks() {
+  /** @type {[import("../types/entities").Task[], Function]} */
   const [myPosted, setMyPosted] = useState([]);
+  /** @type {[import("../types/entities").TaskOffer[], Function]} */
   const [myOffers, setMyOffers] = useState([]);
+  /** @type {[import("../types/entities").Task[], Function]} */
   const [offerTasks, setOfferTasks] = useState([]);
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -74,8 +77,8 @@ export default function MyTasks() {
     }
     const u = user;
     const [posted, offers] = await Promise.all([
-      base44.entities.Task.filter({ created_by: u.email }, "-created_date", 30),
-      base44.entities.TaskOffer.filter({ tasker_email: u.email }, "-created_date", 30),
+      api.entities.Task.filter({ created_by: u.email }, "-created_date", 30),
+      api.entities.TaskOffer.filter({ tasker_email: u.email }, "-created_date", 30),
     ]);
     setMyPosted(posted);
     setMyOffers(offers);
@@ -83,7 +86,7 @@ export default function MyTasks() {
     // Fetch tasks for the offers
     if (offers.length > 0) {
       const taskIds = [...new Set(offers.map((o) => o.task_id))];
-      const tasks = await Promise.all(taskIds.map((id) => base44.entities.Task.filter({ id }, "", 1)));
+      const tasks = await Promise.all(taskIds.map((id) => api.entities.Task.filter({ id }, "", 1)));
       setOfferTasks(tasks.flat());
     }
     setLoading(false);

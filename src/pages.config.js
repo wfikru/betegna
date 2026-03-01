@@ -53,6 +53,7 @@ import MyTasks from './pages/MyTasks';
 import TaskDetail from './pages/TaskDetail';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
+import Messages from './pages/Messages';
 import __Layout from './Layout.jsx';
 
 
@@ -63,6 +64,7 @@ export const PAGES = {
     "TaskDetail": TaskDetail,
     "Profile": Profile,
     "Login": Login,
+    "Messages": Messages,
 }
 
 export const pagesConfig = {

@@ -1,20 +1,24 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { createPageUrl } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
+import { useNotifications } from "@/lib/NotificationContext";
 import {
-  PlusCircle, List, ClipboardList, User, Menu, X, Bell, LogOut
+  PlusCircle, List, ClipboardList, User, Menu, X, Bell, LogOut, MessageCircle
 } from "lucide-react";
 
 const navItems = [
-  { label: "Post Task", page: "PostTask", icon: PlusCircle },
   { label: "Browse Tasks", page: "BrowseTasks", icon: List },
   { label: "My Tasks", page: "MyTasks", icon: ClipboardList },
+  { label: "Post Task", page: "PostTask", icon: PlusCircle },
+  { label: "Messages", page: "Messages", icon: MessageCircle },
   { label: "Profile", page: "Profile", icon: User },
 ];
 
 export default function Layout({ children, currentPageName }) {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const { unreadCount } = useNotifications();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -52,7 +56,31 @@ export default function Layout({ children, currentPageName }) {
 
           <div className="flex items-center gap-2">
             {user && (
-              <span className="hidden md:block text-sm text-gray-500">{user.full_name || user.email}</span>
+              <>
+                {/* Notifications Bell */}
+                <button
+                  onClick={() => navigate(createPageUrl("Notifications"))}
+                  className="relative p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                  title="Notifications"
+                >
+                  <Bell className="w-5 h-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                <span className="hidden md:block text-sm text-gray-500">{user.full_name || user.email}</span>
+                <button
+                  className="hidden md:inline-flex p-2 rounded-lg text-gray-600 hover:bg-gray-100"
+                  onClick={() => {
+                    logout().then(() => navigate('/login'));
+                  }}
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </>
             )}
             <button
               className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
@@ -84,6 +112,17 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
               );
             })}
+            {user && (
+              <button
+                onClick={() => {
+                  logout().then(() => navigate('/login'));
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium mt-2 text-gray-600 hover:bg-gray-50"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            )}
           </div>
         )}
       </header>

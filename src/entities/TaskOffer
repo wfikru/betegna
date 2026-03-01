@@ -40,11 +40,17 @@
       ],
       "default": "pending",
       "description": "Status of the offer"
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the offer was created"
     }
   },
   "required": [
     "task_id",
     "price",
-    "message"
+    "message",
+    "created_date"
   ]
 }

@@ -5,7 +5,11 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
+import Notifications from './pages/Notifications';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { NotificationProvider } from '@/lib/NotificationContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -17,18 +21,10 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   : <>{children}</>;
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, user } = useAuth();
+  const { user } = useAuth();
 
-  // Show loading spinner while checking auth state
-  if (isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  // Render the main app
+  // Render the main app without blocking on auth check
+  // (auth state updates in background via onAuthStateChanged listener)
   return (
     <Routes>
       {/* login route always available; if already signed in redirect to home */}
@@ -37,35 +33,56 @@ const AuthenticatedApp = () => {
         element={user ? <Navigate to="/" /> : <Login />}
       />
 
-      {user ? (
-        <>
+      {/* signup route always available; if already signed in redirect to home */}
+      <Route
+        path="/signup"
+        element={user ? <Navigate to="/" /> : <Signup />}
+      />
+
+      {/* forgot password route always available; if already signed in redirect to home */}
+      <Route
+        path="/forgot-password"
+        element={user ? <Navigate to="/" /> : <ForgotPassword />}
+      />
+
+      {/* public home page - always accessible */}
+      <Route
+        path="/"
+        element={
+          <LayoutWrapper currentPageName={mainPageKey}>
+            <MainPage />
+          </LayoutWrapper>
+        }
+      />
+
+      {/* notifications route - protected */}
+      <Route
+        path="/notifications"
+        element={user ? (
+          <LayoutWrapper currentPageName="Notifications">
+            <Notifications />
+          </LayoutWrapper>
+        ) : (
+          <Navigate to="/login" />
+        )}
+      />
+
+      {/* dynamically register remaining pages; no auth redirects */}
+      {Object.entries(Pages)
+        .filter(([path]) => path !== 'Login')
+        .map(([path, Page]) => (
           <Route
-            path="/"
+            key={path}
+            path={`/${path}`}
             element={
-              <LayoutWrapper currentPageName={mainPageKey}>
-                <MainPage />
+              <LayoutWrapper currentPageName={path}>
+                <Page />
               </LayoutWrapper>
             }
           />
-          {Object.entries(Pages)
-            .filter(([path]) => path !== 'Login')
-            .map(([path, Page]) => (
-              <Route
-                key={path}
-                path={`/${path}`}
-                element={
-                  <LayoutWrapper currentPageName={path}>
-                    <Page />
-                  </LayoutWrapper>
-                }
-              />
-            ))}
-          <Route path="*" element={<PageNotFound />} />
-        </>
-      ) : (
-        // all other paths redirect to login when not authenticated
-        <Route path="*" element={<Navigate to="/login" />} />
-      )}
+        ))}
+
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
@@ -75,12 +92,14 @@ function App() {
 
   return (
     <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
+      <NotificationProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <Router>
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+        </QueryClientProvider>
+      </NotificationProvider>
     </AuthProvider>
   )
 }

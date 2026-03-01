@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/firebaseClient";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,7 @@ const statusColors = {
 };
 
 export default function BrowseTasks() {
+  /** @type {[import("../types/entities").Task[], Function]} */
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -32,8 +33,14 @@ export default function BrowseTasks() {
 
   const loadTasks = async () => {
     setLoading(true);
-    const data = await base44.entities.Task.filter({ status: "open" }, "-created_date", 50);
-    setTasks(data);
+    try {
+      const data = await api.entities.Task.filter({ status: "open" }, "-created_date", 50);
+      setTasks(data);
+    } catch (err) {
+      console.warn("Error loading tasks, falling back to unsorted query:", err.message);
+      const data = await api.entities.Task.filter({ status: "open" }, "", 50);
+      setTasks(data);
+    }
     setLoading(false);
   };
 

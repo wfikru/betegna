@@ -1,37 +1,39 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { auth, base44 } from '@/api/base44Client';
+import { auth, api } from '@/api/firebaseClient';
 import { onAuthStateChanged } from 'firebase/auth';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // BYPASS LOGIN: Set default mock user for testing
-  const mockUser = {
-    uid: 'test-user',
-    email: 'test@example.com',
-    full_name: 'Test User',
-  };
+  // default state; will be replaced when real auth is enabled
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
-  const [user, setUser] = useState(mockUser);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(false);
-
-  // listen for firebase auth state changes (disabled for now with mock user)
+  // listen for firebase auth state changes and keep context in sync
   useEffect(() => {
-    // const unsub = onAuthStateChanged(auth, (u) => {
-    //   setUser(u);
-    //   setIsAuthenticated(!!u);
-    //   setIsLoadingAuth(false);
-    // });
-    // return unsub;
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setIsAuthenticated(!!u);
+      setIsLoadingAuth(false);
+    });
+    return unsub;
   }, []);
 
   const login = async (email, password) => {
-    return base44.auth.signIn(email, password);
+    return api.auth.signIn(email, password);
+  };
+
+  const signup = async (email, password, firstName, lastName) => {
+    return api.auth.signUp(email, password, firstName, lastName);
+  };
+
+  const loginWithGoogle = async () => {
+    return api.auth.signInWithGoogle();
   };
 
   const logout = () => {
-    return base44.auth.logout();
+    return api.auth.logout();
   };
 
   const navigateToLogin = () => {
@@ -44,6 +46,8 @@ export const AuthProvider = ({ children }) => {
       isAuthenticated, 
       isLoadingAuth,
       login,
+      signup,
+      loginWithGoogle,
       logout,
       navigateToLogin
     }}>

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/firebaseClient";
+import { useAuth } from "@/lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,9 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { User, Star, CheckCircle, Briefcase } from "lucide-react";
 import { taskCategories } from "@/components/shared/CategoryBadge";
 import StarRating from "@/components/shared/StarRating";
+import LoginModal from "@/components/LoginModal";
+import { format } from "date-fns";
 
 export default function Profile() {
+  const navigate = useNavigate();
+  const { user: authUser } = useAuth();
   const [user, setUser] = useState(null);
+  /** @type {[import("../types/entities").Review[], Function]} */
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -32,7 +39,7 @@ export default function Profile() {
 
   const loadData = async () => {
     setLoading(true);
-    const u = await base44.auth.me().catch(() => null);
+    const u = await api.auth.me().catch(() => null);
     setUser(u);
     if (u) {
       setForm({
@@ -43,7 +50,7 @@ export default function Profile() {
         skills: u.skills || [],
         hourly_rate: u.hourly_rate || "",
       });
-      const myReviews = await base44.entities.Review.filter({ reviewee_email: u.email }, "-created_date", 10);
+      const myReviews = await api.entities.Review.filter({ reviewee_email: u.email }, "-created_date", 10);
       setReviews(myReviews);
     }
     setLoading(false);
@@ -62,15 +69,30 @@ export default function Profile() {
 
   const save = async () => {
     setSaving(true);
-    await base44.auth.updateMe({
-      ...form,
-      hourly_rate: form.hourly_rate ? Number(form.hourly_rate) : undefined,
-    });
+    
+    const updateData = {
+      bio: form.bio,
+      phone: form.phone,
+      city: form.city,
+      is_tasker: form.is_tasker,
+      skills: form.skills,
+    };
+    
+    // Only add hourly_rate if provided
+    if (form.hourly_rate) {
+      updateData.hourly_rate = Number(form.hourly_rate);
+    }
+    
+    await api.auth.updateMe(updateData);
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
     loadData();
   };
+
+  if (!authUser) {
+    return <LoginModal onCancel={() => navigate("/")} />;
+  }
 
   if (loading) {
     return (
@@ -218,7 +240,7 @@ export default function Profile() {
         <Button
           variant="outline"
           className="w-full"
-          onClick={() => base44.auth.logout()}
+          onClick={() => api.auth.logout()}
         >
           Log Out
         </Button>
@@ -226,22 +248,36 @@ export default function Profile() {
 
       {/* Reviews */}
       {reviews.length > 0 && (
-        <div className="mt-6">
-          <h2 className="font-bold text-gray-900 mb-3">Reviews ({reviews.length})</h2>
-          <div className="space-y-3">
+        <Card className="mt-6 border border-gray-100">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base">Reviews & Ratings</CardTitle>
+              <div className="flex items-center gap-2">
+                <div className="text-2xl font-bold text-gray-900">{avgRating.toFixed(1)}</div>
+                <div>
+                  <StarRating rating={Math.round(avgRating)} size="sm" />
+                  <p className="text-xs text-gray-500">{reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}</p>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
             {reviews.map((r) => (
-              <Card key={r.id} className="border border-gray-100">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-1">
+              <div key={r.id} className="border border-gray-100 rounded-lg p-3">
+                <div className="flex items-start justify-between mb-2">
+                  <div>
                     <p className="font-medium text-sm">{r.reviewer_name}</p>
                     <StarRating rating={r.rating} size="sm" />
                   </div>
-                  {r.comment && <p className="text-sm text-gray-600">{r.comment}</p>}
-                </CardContent>
-              </Card>
+                  <p className="text-xs text-gray-400">
+                    {format(new Date(r.created_date), "MMM d, yyyy")}
+                  </p>
+                </div>
+                {r.comment && <p className="text-sm text-gray-600 leading-relaxed">{r.comment}</p>}
+              </div>
             ))}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

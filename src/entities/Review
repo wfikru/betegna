@@ -25,11 +25,17 @@
     "comment": {
       "type": "string",
       "description": "Review comment"
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the review was submitted"
     }
   },
   "required": [
     "task_id",
     "reviewee_email",
-    "rating"
+    "rating",
+    "created_date"
   ]
 }
