@@ -139,19 +139,19 @@ export default function LoginModal({ onCancel, hideOverlay = false }) {
         className="w-full max-w-md max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <Card className="rounded-2xl border-0 shadow-xl bg-white">
+        <Card className="rounded-2xl border-0 shadow-xl bg-white relative">
+          {!hideOverlay && (
+            <button
+              onClick={handleCancel}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors p-1 z-10"
+              aria-label="Close"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
           <CardHeader className="space-y-2 pt-6 pb-4">
-            {!hideOverlay && (
-              <button
-                onClick={handleCancel}
-                className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors p-1"
-                aria-label="Close"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
             <div className="mx-auto w-14 h-14 bg-green-700 rounded-2xl flex items-center justify-center mb-2">
               {mode === "forgot-password" ? (
                 <KeyRound className="w-7 h-7 text-white" />

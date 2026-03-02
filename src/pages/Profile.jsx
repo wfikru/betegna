@@ -34,12 +34,18 @@ export default function Profile() {
   });
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (authUser) {
+      loadData();
+    } else {
+      setUser(null);
+      setReviews([]);
+      setLoading(false);
+    }
+  }, [authUser]);
 
   const loadData = async () => {
     setLoading(true);
-    const u = await api.auth.me().catch(() => null);
+    const u = await api.auth.me().catch(() => authUser);
     setUser(u);
     if (u) {
       setForm({
@@ -104,9 +110,8 @@ export default function Profile() {
 
   if (!user) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center text-gray-400">
-        <User className="w-12 h-12 mx-auto mb-3 opacity-40" />
-        <p className="font-medium">Please log in to view your profile</p>
+      <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+        {[1, 2].map((i) => <div key={i} className="h-24 bg-gray-100 animate-pulse rounded-xl" />)}
       </div>
     );
   }

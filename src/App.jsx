@@ -33,9 +33,21 @@ const AuthenticatedApp = () => {
         element={user ? <Navigate to="/" /> : <Login />}
       />
 
+      {/* Login route with capital L (for dynamic routing) */}
+      <Route
+        path="/Login"
+        element={user ? <Navigate to="/" /> : <Login />}
+      />
+
       {/* signup route always available; if already signed in redirect to home */}
       <Route
         path="/signup"
+        element={user ? <Navigate to="/" /> : <Signup />}
+      />
+
+      {/* Signup route with capital S (for dynamic routing) */}
+      <Route
+        path="/Signup"
         element={user ? <Navigate to="/" /> : <Signup />}
       />
 
@@ -45,14 +57,20 @@ const AuthenticatedApp = () => {
         element={user ? <Navigate to="/" /> : <ForgotPassword />}
       />
 
+      {/* ForgotPassword route with capital letters (for dynamic routing) */}
+      <Route
+        path="/ForgotPassword"
+        element={user ? <Navigate to="/" /> : <ForgotPassword />}
+      />
+
       {/* public home page - always accessible */}
       <Route
         path="/"
-        element={
+        element={user ? <Navigate to="/BrowseTasks" /> : (
           <LayoutWrapper currentPageName={mainPageKey}>
             <MainPage />
           </LayoutWrapper>
-        }
+        )}
       />
 
       {/* notifications route - protected */}
@@ -69,7 +87,7 @@ const AuthenticatedApp = () => {
 
       {/* dynamically register remaining pages; no auth redirects */}
       {Object.entries(Pages)
-        .filter(([path]) => path !== 'Login')
+        .filter(([path]) => path !== 'Login' && path !== 'Signup' && path !== 'ForgotPassword')
         .map(([path, Page]) => (
           <Route
             key={path}

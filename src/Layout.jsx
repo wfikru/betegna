@@ -21,12 +21,15 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Home page gets full layout without standard padding
+  const isHomePage = currentPageName === "Home";
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Top Nav */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link to={createPageUrl("BrowseTasks")} className="flex items-center gap-2">
+          <Link to={createPageUrl("Home")} className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-green-700 flex items-center justify-center">
               <span className="text-white font-bold text-sm">B</span>
             </div>
@@ -128,30 +131,32 @@ export default function Layout({ children, currentPageName }) {
       </header>
 
       {/* Page Content */}
-      <main className="flex-1">
+      <main className={isHomePage ? "flex-1" : "flex-1"}>
         {children}
       </main>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-40">
-        <div className="flex">
-          {navItems.map(({ label, page, icon: Icon }) => {
-            const active = currentPageName === page;
-            return (
-              <Link
-                key={page}
-                to={createPageUrl(page)}
-                className={`flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-xs font-medium transition-colors ${
-                  active ? "text-green-700" : "text-gray-500"
-                }`}
-              >
-                <Icon className={`w-5 h-5 ${active ? "text-green-700" : "text-gray-400"}`} />
-                <span className="text-[10px]">{label}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
+      {/* Mobile Bottom Nav - Hide on Home page */}
+      {!isHomePage && (
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-40">
+          <div className="flex">
+            {navItems.map(({ label, page, icon: Icon }) => {
+              const active = currentPageName === page;
+              return (
+                <Link
+                  key={page}
+                  to={createPageUrl(page)}
+                  className={`flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-xs font-medium transition-colors ${
+                    active ? "text-green-700" : "text-gray-500"
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 ${active ? "text-green-700" : "text-gray-400"}`} />
+                  <span className="text-[10px]">{label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </div>
   );
 }

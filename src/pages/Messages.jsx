@@ -3,9 +3,12 @@ import { api } from "@/api/firebaseClient";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft, Send, MessageCircle } from "lucide-react";
 import { format } from "date-fns";
+import { useAuth } from "@/lib/AuthContext";
+import LoginModal from "@/components/LoginModal";
 
 export default function Messages() {
   const navigate = useNavigate();
+  const { user: authUser } = useAuth();
   const [searchParams] = useSearchParams();
   const [conversations, setConversations] = useState([]);
   const [user, setUser] = useState(null);
@@ -17,8 +20,16 @@ export default function Messages() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (authUser) {
+      loadData();
+    } else {
+      setUser(null);
+      setConversations([]);
+      setMessages([]);
+      setSelectedConversation(null);
+      setLoading(false);
+    }
+  }, [authUser]);
 
   // Auto-select conversation if taskId is provided in URL
   useEffect(() => {
@@ -43,7 +54,7 @@ export default function Messages() {
 
   const loadData = async () => {
     setLoading(true);
-    const u = await api.auth.me().catch(() => null);
+    const u = await api.auth.me().catch(() => authUser);
     setUser(u);
 
     if (u) {
@@ -143,6 +154,13 @@ export default function Messages() {
     }
     setSubmitting(false);
   };
+
+  // Show login modal if user is not authenticated
+  if (!authUser) {
+    return (
+      <LoginModal onCancel={() => navigate("/")} />
+    );
+  }
 
   if (loading) {
     return (

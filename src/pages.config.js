@@ -54,10 +54,12 @@ import TaskDetail from './pages/TaskDetail';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Messages from './pages/Messages';
+import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Home": Home,
     "BrowseTasks": BrowseTasks,
     "PostTask": PostTask,
     "MyTasks": MyTasks,
@@ -68,7 +70,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "BrowseTasks",
+    mainPage: "Home",
     Pages: PAGES,
     Layout: __Layout,
 };
