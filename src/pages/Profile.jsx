@@ -17,7 +17,7 @@ import { format } from "date-fns";
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { user: authUser } = useAuth();
+  const { user: authUser, isLoadingAuth } = useAuth();
   const [user, setUser] = useState(null);
   /** @type {[import("../types/entities").Review[], Function]} */
   const [reviews, setReviews] = useState([]);
@@ -95,6 +95,14 @@ export default function Profile() {
     setTimeout(() => setSaved(false), 2000);
     loadData();
   };
+
+  if (isLoadingAuth) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+        {[1, 2, 3].map((i) => <div key={i} className="h-32 bg-gray-100 animate-pulse rounded-xl" />)}
+      </div>
+    );
+  }
 
   if (!authUser) {
     return <LoginModal onCancel={() => navigate("/")} />;

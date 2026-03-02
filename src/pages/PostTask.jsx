@@ -15,7 +15,7 @@ import LoginModal from "@/components/LoginModal";
 
 export default function PostTask() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isLoadingAuth } = useAuth();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [form, setForm] = useState({
@@ -55,6 +55,14 @@ export default function PostTask() {
       setLoading(false);
     }
   };
+
+  if (isLoadingAuth) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+        {[1, 2, 3].map((i) => <div key={i} className="h-24 bg-gray-100 animate-pulse rounded-xl" />)}
+      </div>
+    );
+  }
 
   if (!user) {
     return (

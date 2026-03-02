@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -15,8 +15,9 @@ import { api } from "@/api/firebaseClient";
  * @param {boolean} hideOverlay - If true, removes the overlay background
  */
 export default function LoginModal({ onCancel, hideOverlay = false }) {
-  const { login, signup, loginWithGoogle } = useAuth();
+  const { user, login, signup, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mode, setMode] = useState("signin");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -25,6 +26,20 @@ export default function LoginModal({ onCancel, hideOverlay = false }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
   const [resetSuccess, setResetSuccess] = useState(false);
+
+  const redirectAfterLogin = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get("redirect") || "/BrowseTasks";
+  }, [location.search]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    // If user is on dedicated login route, move them to target page after auth resolves.
+    if (location.pathname === "/login" || location.pathname === "/Login") {
+      navigate(redirectAfterLogin, { replace: true });
+    }
+  }, [user, location.pathname, redirectAfterLogin, navigate]);
 
   const handleCancel = onCancel ? onCancel : () => navigate("/");
 

@@ -8,7 +8,7 @@ import LoginModal from "@/components/LoginModal";
 
 export default function Messages() {
   const navigate = useNavigate();
-  const { user: authUser } = useAuth();
+  const { user: authUser, isLoadingAuth } = useAuth();
   const [searchParams] = useSearchParams();
   const [conversations, setConversations] = useState([]);
   const [user, setUser] = useState(null);
@@ -154,6 +154,18 @@ export default function Messages() {
     }
     setSubmitting(false);
   };
+
+  if (isLoadingAuth) {
+    return (
+      <div className="max-w-2xl mx-auto px-4">
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   // Show login modal if user is not authenticated
   if (!authUser) {

@@ -17,6 +17,7 @@ import {
   updateProfile,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail
 } from "firebase/auth";
@@ -219,12 +220,30 @@ const authWrapper = {
     }, { merge: true });
     return userCredential;
   },
-  // google popup login
-  signInWithGoogle: () => {
+  // Google login: prefer popup (works best with immediate auth state update),
+  // fallback to redirect for environments where popup is blocked/unsupported.
+  signInWithGoogle: async () => {
     const provider = new GoogleAuthProvider();
     // optional: restrict to specific hosted domain (e.g., your organization)
     // provider.setCustomParameters({ hd: 'example.com' });
-    return signInWithPopup(auth, provider);
+
+    try {
+      return await signInWithPopup(auth, provider);
+    } catch (err) {
+      const code = err?.code || "";
+      const shouldFallbackToRedirect = [
+        "auth/popup-blocked",
+        "auth/popup-closed-by-user",
+        "auth/cancelled-popup-request",
+        "auth/operation-not-supported-in-this-environment",
+      ].includes(code);
+
+      if (shouldFallbackToRedirect) {
+        return signInWithRedirect(auth, provider);
+      }
+
+      throw err;
+    }
   },
   // password reset email
   resetPassword: (email) => sendPasswordResetEmail(auth, email),
