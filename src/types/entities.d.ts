@@ -5,8 +5,7 @@ export interface Task {
   title: string;
   description: string;
   category: string;
-  budget_min?: number;
-  budget_max?: number;
+  budget?: number;
   location?: string;
   city?: string;
   date_needed?: string;

@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Sprout, ShoppingCart, Lightbulb, Package, Wrench, ListTodo, Sparkles, MoreHorizontal } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export const taskCategories = [
   { id: "delivery", nameEn: "Delivery", nameAm: "ማድረስ", color: "bg-orange-100 text-orange-800", icon: Package },
@@ -17,10 +18,13 @@ export function getCategoryById(id) {
 }
 
 export default function CategoryBadge({ categoryId }) {
+  const { i18n } = useTranslation();
   const cat = getCategoryById(categoryId);
+  const displayName = i18n.language === 'am' ? cat.nameAm : cat.nameEn;
+  
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${cat.color}`}>
-      {cat.nameEn}
+      {displayName}
     </span>
   );
 }

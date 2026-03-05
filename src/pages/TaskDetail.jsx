@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { api } from "@/api/firebaseClient";
+import { api, db } from "@/api/firebaseClient";
 import { createPageUrl } from "@/utils";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { writeBatch, doc } from "firebase/firestore";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -88,19 +89,37 @@ export default function TaskDetail() {
   
   const isOwner = user && task && task.created_by === user.email;
   const canOffer = user && user.is_tasker && task && task.status === "open" && !isOwner && myOffers.length < 3 && (!myOffer || myOffer.status === "rejected");
+  const taskBudget = Number(task?.budget);
+
+  const getDefaultOfferPrice = () => {
+    return Number.isFinite(taskBudget) ? String(taskBudget) : "";
+  };
+
+  const openOfferForm = () => {
+    // Only pre-fill price if form is empty (first time opening)
+    if (!offerForm.price) {
+      setOfferForm((prev) => ({
+        ...prev,
+        price: getDefaultOfferPrice(),
+      }));
+    }
+    setShowOfferForm(true);
+  };
 
   const submitOffer = async (e) => {
     e.preventDefault();
-    if (!offerForm.price || !offerForm.message) return;
+    if (!offerForm.price) return;
     setSubmitting(true);
+    
+    const priceValue = Number(offerForm.price);
     
     const offerData = {
       task_id: taskId,
       task_title: task.title,
       tasker_email: user.email,
       tasker_name: user.full_name || user.email,
-      price: Number(offerForm.price),
-      message: offerForm.message,
+      price: priceValue,
+      message: offerForm.message?.trim() || "",
       status: "pending",
     };
     
@@ -126,72 +145,98 @@ export default function TaskDetail() {
     
     setSubmitting(false);
     setShowOfferForm(false);
+    // Reset form after successful submission
+    setOfferForm({ price: "", message: "", estimated_hours: "" });
     loadData();
   };
 
   const acceptOffer = async (offer) => {
-    await api.entities.Task.update(taskId, {
-      status: "assigned",
-      assigned_to: offer.tasker_email,
-      assigned_to_name: offer.tasker_name,
-    });
-    await api.entities.TaskOffer.update(offer.id, { status: "accepted" });
-    
-    // Notify the accepted offer maker
-    await api.entities.Notification.create({
-      recipient_email: offer.tasker_email,
-      type: "offer_accepted",
-      title: "Your Offer Was Accepted!",
-      message: `Your offer of ETB ${offer.price} for "${task.title}" has been accepted!`,
-      task_id: taskId,
-      task_title: task.title,
-      offer_id: offer.id,
-      actor_name: user.full_name || user.email,
-      actor_email: user.email,
-      read: false,
-    });
-    
-    // Reject other offers and notify their makers
-    for (const o of offers) {
-      if (o.id !== offer.id && o.status === "pending") {
-        await api.entities.TaskOffer.update(o.id, { status: "rejected" });
-        
-        // Notify rejected offer makers
-        await api.entities.Notification.create({
-          recipient_email: o.tasker_email,
-          type: "offer_rejected",
-          title: "Your Offer Was Not Selected",
-          message: `Your offer of ETB ${o.price} for "${task.title}" was not selected.`,
-          task_id: taskId,
-          task_title: task.title,
-          offer_id: o.id,
-          actor_name: user.full_name || user.email,
-          actor_email: user.email,
-          read: false,
-        });
+    try {
+      // Use batch write to reduce write operations and ensure atomic updates
+      const batch = writeBatch(db);
+      
+      // Update task to assigned status
+      batch.update(doc(db, 'tasks', taskId), {
+        status: "assigned",
+        assigned_to: offer.tasker_email,
+        assigned_to_name: offer.tasker_name,
+      });
+      
+      // Accept the selected offer
+      batch.update(doc(db, 'taskOffers', offer.id), { status: "accepted" });
+      
+      // Reject all other pending offers in a single batch
+      offers.forEach((o) => {
+        if (o.id !== offer.id && o.status === "pending") {
+          batch.update(doc(db, 'taskOffers', o.id), { status: "rejected" });
+        }
+      });
+      
+      await batch.commit();
+      
+      // Create notifications after batch completes (these are separate writes)
+      // Notify accepted offer maker
+      await api.entities.Notification.create({
+        recipient_email: offer.tasker_email,
+        type: "offer_accepted",
+        title: "Your Offer Was Accepted!",
+        message: `Your offer of ETB ${offer.price} for "${task.title}" has been accepted!`,
+        task_id: taskId,
+        task_title: task.title,
+        offer_id: offer.id,
+        actor_name: user.full_name || user.email,
+        actor_email: user.email,
+        read: false,
+      });
+      
+      // Notify rejected offer makers
+      for (const o of offers) {
+        if (o.id !== offer.id && o.status === "pending") {
+          await api.entities.Notification.create({
+            recipient_email: o.tasker_email,
+            type: "offer_rejected",
+            title: "Your Offer Was Not Selected",
+            message: `Your offer of ETB ${o.price} for "${task.title}" was not selected.`,
+            task_id: taskId,
+            task_title: task.title,
+            offer_id: o.id,
+            actor_name: user.full_name || user.email,
+            actor_email: user.email,
+            read: false,
+          });
+        }
       }
+      
+      loadData();
+    } catch (err) {
+      console.error("Error accepting offer:", err);
+      alert("Failed to accept offer. Please try again.");
     }
-    loadData();
   };
 
   const rejectOffer = async (offer) => {
-    await api.entities.TaskOffer.update(offer.id, { status: "rejected" });
-    
-    // Notify the rejected offer maker
-    await api.entities.Notification.create({
-      recipient_email: offer.tasker_email,
-      type: "offer_rejected",
-      title: "Your Offer Was Not Selected",
-      message: `Your offer of ETB ${offer.price} for "${task.title}" was not selected.`,
-      task_id: taskId,
-      task_title: task.title,
-      offer_id: offer.id,
-      actor_name: user.full_name || user.email,
-      actor_email: user.email,
-      read: false,
-    });
-    
-    loadData();
+    try {
+      await api.entities.TaskOffer.update(offer.id, { status: "rejected" });
+      
+      // Notify the rejected offer maker
+      await api.entities.Notification.create({
+        recipient_email: offer.tasker_email,
+        type: "offer_rejected",
+        title: "Your Offer Was Not Selected",
+        message: `Your offer of ETB ${offer.price} for "${task.title}" was not selected.`,
+        task_id: taskId,
+        task_title: task.title,
+        offer_id: offer.id,
+        actor_name: user.full_name || user.email,
+        actor_email: user.email,
+        read: false,
+      });
+      
+      loadData();
+    } catch (err) {
+      console.error("Error rejecting offer:", err);
+      alert("Failed to reject offer. Please try again.");
+    }
   };
 
   const markComplete = async () => {
@@ -211,12 +256,12 @@ export default function TaskDetail() {
         comment: reviewForm.comment,
       });
     } else {
-      // Create new review
+      // Create new review - task owner reviews the assigned tasker
       await api.entities.Review.create({
         task_id: taskId,
         reviewer_email: user.email,
         reviewer_name: user.full_name || user.email,
-        reviewee_email: isOwner ? task.assigned_to : task.created_by,
+        reviewee_email: task.assigned_to, // Always the tasker being reviewed
         rating: reviewForm.rating,
         comment: reviewForm.comment,
       });
@@ -307,13 +352,11 @@ export default function TaskDetail() {
           <p className="text-gray-600 text-sm mt-3 leading-relaxed">{task.description}</p>
 
           <div className="grid grid-cols-2 gap-3 mt-4 text-sm">
-            {(task.budget_min || task.budget_max) && (
+            {Number.isFinite(taskBudget) && (
               <div className="bg-green-50 rounded-lg p-3">
                 <p className="text-xs text-gray-500 mb-0.5">Budget</p>
                 <p className="font-bold text-green-700">
-                  ETB {task.budget_min && task.budget_max && task.budget_min !== task.budget_max
-                    ? `${task.budget_min}–${task.budget_max}`
-                    : task.budget_max || task.budget_min}
+                  ETB {taskBudget}
                 </p>
               </div>
             )}
@@ -370,15 +413,15 @@ export default function TaskDetail() {
         </Card>
       )}
 
-      {/* Review after completion */}
-      {task.status === "completed" && user && (
+      {/* Review after completion - ONLY FOR TASK OWNER */}
+      {task.status === "completed" && user && isOwner && (
         <Card className="mb-4 border border-gray-100">
           <CardContent className="p-4">
             {myReview && !showReviewForm ? (
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-medium text-sm mb-2">Your Review</p>
+                    <p className="font-medium text-sm mb-2">Your Review for {task.assigned_to_name}</p>
                     <StarRating rating={myReview.rating} size="md" />
                     {myReview.comment && (
                       <p className="text-sm text-gray-600 mt-2 leading-relaxed">{myReview.comment}</p>
@@ -407,14 +450,14 @@ export default function TaskDetail() {
               </div>
             ) : !showReviewForm ? (
               <Button variant="outline" className="w-full" onClick={() => setShowReviewForm(true)}>
-                Leave a Review
+                Leave a Review for {task.assigned_to_name}
               </Button>
             ) : (
               <form onSubmit={submitReview} className="space-y-3">
-                <p className="font-medium text-sm">{editingReview ? "Edit Your Review" : "Leave a Review"}</p>
+                <p className="font-medium text-sm">{editingReview ? "Edit Your Review" : `Review ${task.assigned_to_name}`}</p>
                 <StarRating rating={reviewForm.rating} interactive onChange={(r) => setReviewForm((p) => ({ ...p, rating: r }))} size="lg" />
                 <Textarea
-                  placeholder="Share your experience..."
+                  placeholder="Share your experience with the tasker..."
                   value={reviewForm.comment}
                   onChange={(e) => setReviewForm((p) => ({ ...p, comment: e.target.value }))}
                   rows={3}
@@ -448,8 +491,9 @@ export default function TaskDetail() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-start gap-3">
                     <Avatar 
-                      className="w-10 h-10 cursor-pointer hover:opacity-80 transition"
+                      className="w-10 h-10 cursor-pointer hover:opacity-70 hover:ring-2 hover:ring-green-500 transition shrink-0"
                       onClick={() => viewUserProfile(offer.tasker_email, offer.tasker_name)}
+                      title="Click to view profile and reviews"
                     >
                       <AvatarFallback className="bg-green-700 text-white font-semibold">
                         {offer.tasker_name.split(' ').map(n => n.charAt(0)).join('').toUpperCase().slice(0, 2)}
@@ -461,7 +505,9 @@ export default function TaskDetail() {
                       {offer.estimated_hours && (
                         <p className="text-xs text-gray-400">{offer.estimated_hours}h estimated</p>
                       )}
-                      <p className="text-sm text-gray-600 mt-1">{offer.message}</p>
+                      {offer.message ? (
+                        <p className="text-sm text-gray-600 mt-1">{offer.message}</p>
+                      ) : null}
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
@@ -500,7 +546,9 @@ export default function TaskDetail() {
                     {myOffer.estimated_hours && (
                       <p className="text-xs text-gray-400">{myOffer.estimated_hours}h estimated</p>
                     )}
-                    <p className="text-sm text-gray-600 mt-1">{myOffer.message}</p>
+                    {myOffer.message ? (
+                      <p className="text-sm text-gray-600 mt-1">{myOffer.message}</p>
+                    ) : null}
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
@@ -518,7 +566,7 @@ export default function TaskDetail() {
           {(!myOffer || myOffer.status === "rejected") && canOffer ? (
             <>
               {!showOfferForm ? (
-                <Button className="w-full bg-green-700 hover:bg-green-800 text-white" onClick={() => setShowOfferForm(true)}>
+                <Button className="w-full bg-green-700 hover:bg-green-800 text-white" onClick={openOfferForm}>
                   <Send className="w-4 h-4 mr-2" /> Make an Offer
                 </Button>
               ) : (
@@ -527,16 +575,16 @@ export default function TaskDetail() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label htmlFor="price">Your Price (ETB) *</Label>
-                      <Input id="price" type="number" placeholder="300" value={offerForm.price} onChange={(e) => setOfferForm((p) => ({ ...p, price: e.target.value }))} required className="mt-1" />
+                      <Input id="price" type="number" step="any" min="0" placeholder="300" value={offerForm.price} onChange={(e) => setOfferForm((p) => ({ ...p, price: e.target.value }))} required className="mt-1" />
                     </div>
                     <div>
                       <Label htmlFor="est_hours">Est. Hours</Label>
-                      <Input id="est_hours" type="number" placeholder="2" value={offerForm.estimated_hours} onChange={(e) => setOfferForm((p) => ({ ...p, estimated_hours: e.target.value }))} className="mt-1" />
+                      <Input id="est_hours" type="number" step="any" min="0" placeholder="2" value={offerForm.estimated_hours} onChange={(e) => setOfferForm((p) => ({ ...p, estimated_hours: e.target.value }))} className="mt-1" />
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="message">Message *</Label>
-                    <Textarea id="message" placeholder="Describe your experience and why you're the right person..." value={offerForm.message} onChange={(e) => setOfferForm((p) => ({ ...p, message: e.target.value }))} required rows={3} className="mt-1" />
+                    <Label htmlFor="message">Message (optional)</Label>
+                    <Textarea id="message" placeholder="Add a short note (optional)" value={offerForm.message} onChange={(e) => setOfferForm((p) => ({ ...p, message: e.target.value }))} rows={3} className="mt-1" />
                   </div>
                   <div className="flex gap-2">
                     <Button type="submit" disabled={submitting} className="bg-green-700 hover:bg-green-800 text-white">

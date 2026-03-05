@@ -1,0 +1,181 @@
+{
+  "app": {
+    "name": "Betegna",
+    "tagline": "Get Things Done with Betegna"
+  },
+  "nav": {
+    "home": "Home",
+    "browseTasks": "Browse Tasks",
+    "myTasks": "My Tasks",
+    "postTask": "Post Task",
+    "messages": "Messages",
+    "profile": "Profile",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "home": {
+    "hero": {
+      "title": "Get Things Done with Betegna",
+      "subtitle": "Connect with skilled taskers in your area for everyday tasks. From home repairs to deliveries, find help fast and affordable.",
+      "searchPlaceholder": "What do you need help with?",
+      "findTaskers": "Find Taskers"
+    },
+    "firstTimeGuide": {
+      "badge": "First time on Betegna?",
+      "title": "Quick Start Guide",
+      "description": "Start with search or category browse, then post a task when you are ready. You can close this guide anytime.",
+      "exploreTasks": "Explore Tasks",
+      "postFirstTask": "Post Your First Task"
+    },
+    "recentOpportunities": {
+      "title": "Recent Opportunities",
+      "subtitle": "Fresh tasks posted by people in your area",
+      "viewAll": "View All Tasks"
+    },
+    "categories": {
+      "title": "Popular Categories",
+      "subtitle": "Find the perfect tasker for any job"
+    },
+    "howItWorks": {
+      "title": "How Betegna Works",
+      "subtitle": "Getting help is simple and straightforward",
+      "step1": {
+        "title": "Post Your Task",
+        "description": "Describe what you need done and set your budget"
+      },
+      "step2": {
+        "title": "Get Offers",
+        "description": "Skilled taskers send you offers with their price and availability"
+      },
+      "step3": {
+        "title": "Choose & Chat",
+        "description": "Review profiles, chat with taskers, and select the best fit"
+      },
+      "step4": {
+        "title": "Get It Done",
+        "description": "Tasker completes your task. You review and pay securely"
+      }
+    },
+    "cta": {
+      "title": "Ready to Get Started?",
+      "subtitle": "Join thousands of people getting things done every day with Betegna",
+      "postTask": "Post Your First Task",
+      "browseTasks": "Browse Available Tasks"
+    }
+  },
+  "browseTasks": {
+    "title": "Browse Available Tasks",
+    "subtitle": "Find tasks that match your skills and earn money",
+    "searchPlaceholder": "Search tasks by title or description...",
+    "filterCategory": "Category",
+    "filterCity": "City",
+    "allCategories": "All Categories",
+    "allCities": "All Cities",
+    "resultsCount": "{{count}} task found",
+    "resultsCount_other": "{{count}} tasks found",
+    "noTasksTitle": "No tasks found",
+    "noTasksMessage": "Try adjusting your search or filters",
+    "clearFilters": "Clear filters",
+    "noOpenTasksTitle": "No open tasks yet",
+    "noOpenTasksMessage": "Be the first to post a task and get offers from taskers.",
+    "postTaskCta": "Post a Task",
+    "refreshCta": "Refresh",
+    "guestEmptyTitle": "No tasks available right now",
+    "guestEmptyMessage": "Create an account to post your first task and start receiving offers.",
+    "signupCta": "Create Account",
+    "budget": "Budget",
+    "postedBy": "Posted by",
+    "neededBy": "Needed by"
+  },
+  "myTasks": {
+    "title": "My Tasks",
+    "subtitle": "Track tasks you've posted, offers made, and favorites",
+    "tabs": {
+      "posted": "Tasks Posted",
+      "postedShort": "Posted",
+      "offers": "My Offers",
+      "offersShort": "Offers",
+      "favorites": "Favorites",
+      "favoritesShort": "Saved"
+    },
+    "noPostedTasks": {
+      "title": "No tasks posted yet",
+      "message": "Start by posting a task to get offers from skilled taskers",
+      "button": "Post Your First Task"
+    },
+    "noOffers": {
+      "title": "No offers made yet",
+      "message": "Browse available tasks and make offers to start earning money",
+      "button": "Browse Tasks"
+    },
+    "noFavorites": {
+      "title": "No favorites yet",
+      "message": "Save tasks you're interested in for later by clicking the heart icon",
+      "button": "Browse Tasks"
+    },
+    "yourOffer": "Your offer"
+  },
+  "postTask": {
+    "title": "Post a New Task",
+    "subtitle": "Tell us what you need help with"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your account and tasker settings"
+  },
+  "taskCard": {
+    "budget": "ETB {{amount}}",
+    "location": "{{location}}",
+    "neededBy": "Needed by {{date}}",
+    "postedBy": "Posted by {{name}}",
+    "postedOn": "Posted on {{date}}",
+    "unknownUser": "Unknown user",
+    "addToFavorites": "Add to favorites",
+    "removeFromFavorites": "Remove from favorites"
+  },
+  "taskStatus": {
+    "open": "Open",
+    "assigned": "Assigned",
+    "in_progress": "In Progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "offerStatus": {
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "withdrawn": "Withdrawn"
+  },
+  "categories": {
+    "cleaning": "Cleaning",
+    "repair": "Repair & Maintenance",
+    "delivery": "Delivery & Moving",
+    "market": "Market Shopping",
+    "event": "Event Services",
+    "farming": "Farming & Agriculture",
+    "errand": "Errand & Personal Assistant",
+    "other": "Other"
+  },
+  "cities": {
+    "addis_ababa": "Addis Ababa",
+    "dire_dawa": "Dire Dawa",
+    "hawassa": "Hawassa",
+    "bahir_dar": "Bahir Dar",
+    "adama": "Adama",
+    "mekelle": "Mekelle",
+    "jimma": "Jimma"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "viewDetails": "View Details",
+    "backToHome": "Back to Home"
+  }
+}

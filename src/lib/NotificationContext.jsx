@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { api, db } from '@/api/firebaseClient';
 import { useAuth } from './AuthContext';
-import { onSnapshot, query, collection, where } from 'firebase/firestore';
+import { onSnapshot, query, collection, where, limit, orderBy } from 'firebase/firestore';
 
 const NotificationContext = createContext();
 
@@ -10,23 +10,39 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isPageVisible, setIsPageVisible] = useState(true);
 
-  // Real-time listener for notifications
+  // Track page visibility to reduce unnecessary listeners
   useEffect(() => {
-    if (!user?.email) return;
+    const handleVisibilityChange = () => {
+      setIsPageVisible(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  // Real-time listener for notifications (only when page is visible)
+  useEffect(() => {
+    if (!user?.email || !isPageVisible) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
 
     setLoading(true);
     
-    // Subscribe to real-time updates for user's notifications
+    // Subscribe to real-time updates for user's notifications with limits to reduce reads
     const q = query(
       collection(db, 'notifications'),
-      where('recipient_email', '==', user.email)
+      where('recipient_email', '==', user.email),
+      orderBy('created_date', 'desc'),
+      limit(100)  // Limit to 100 most recent notifications
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const notifs = snapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+        .map((doc) => ({ id: doc.id, ...doc.data() }));
       
       setNotifications(notifs);
       setUnreadCount(notifs.filter((n) => !n.read).length);
@@ -34,7 +50,7 @@ export const NotificationProvider = ({ children }) => {
     });
 
     return () => unsubscribe();
-  }, [user?.email]);
+  }, [user?.email, isPageVisible]);
 
   const markAsRead = async (notificationId) => {
     await api.entities.Notification.update(notificationId, { read: true });

@@ -1,0 +1,181 @@
+{
+  "app": {
+    "name": "በተኛ",
+    "tagline": "በበተኛ ስራዎችዎን ያጠናቅቁ"
+  },
+  "nav": {
+    "home": "መነሻ",
+    "browseTasks": "ስራዎችን አስስ",
+    "myTasks": "የእኔ ስራዎች",
+    "postTask": "ስራ ለጥፍ",
+    "messages": "መልዕክቶች",
+    "profile": "መገለጫ",
+    "login": "ግባ",
+    "logout": "ውጣ"
+  },
+  "home": {
+    "hero": {
+      "title": "በበተኛ ስራዎችዎን ያጠናቅቁ",
+      "subtitle": "በአካባቢዎ ባሉ ችሎታ ያላቸው ሰራተኞች ጋር ለዕለት ተዕለት ስራዎች ይገናኙ። ከቤት ጥገና እስከ መላኪያ፣ ፈጣን እና ተመጣጣኝ እርዳታ ያግኙ።",
+      "searchPlaceholder": "ምን እርዳታ ያስፈልግዎታል?",
+      "findTaskers": "ሰራተኞችን አግኝ"
+    },
+    "firstTimeGuide": {
+      "badge": "በበተኛ ላይ ለመጀመሪያ ጊዜ?",
+      "title": "የፈጣን ጅምር መመሪያ",
+      "description": "በፍለጋ ወይም በምድብ አሰሳ ይጀምሩ፣ ከዚያ ዝግጁ በሚሆኑበት ጊዜ ስራ ያስተላልፉ። ይህን መመሪያ በማንኛውም ጊዜ መዝጋት ይችላሉ።",
+      "exploreTasks": "ስራዎችን ያስሱ",
+      "postFirstTask": "የመጀመሪያውን ስራ ያስቀምጡ"
+    },
+    "recentOpportunities": {
+      "title": "የቅርብ ጊዜ እድሎች",
+      "subtitle": "በአካባቢዎ ያሉ ሰዎች የለጠፉ አዲስ ስራዎች",
+      "viewAll": "ሁሉንም ስራዎች ይመልከቱ"
+    },
+    "categories": {
+      "title": "ታዋቂ ምድቦች",
+      "subtitle": "ለማንኛውም ስራ ትክክለኛውን ሰራተኛ ያግኙ"
+    },
+    "howItWorks": {
+      "title": "በተኛ እንዴት እንደሚሰራ",
+      "subtitle": "እርዳታ ማግኘት ቀላል እና ቀጥተኛ ነው",
+      "step1": {
+        "title": "ስራዎን ያስቀምጡ",
+        "description": "የሚያስፈልግዎትን ይግለጹ እና በጀትዎን ያስቀምጡ"
+      },
+      "step2": {
+        "title": "ቅናሾችን ይቀበሉ",
+        "description": "ችሎታ ያላቸው ሰራተኞች ዋጋዎቻቸውን እና መገኘታቸውን ይልኩልዎታል"
+      },
+      "step3": {
+        "title": "ይምረጡ እና ይወያዩ",
+        "description": "መገለጫዎችን ይገምግሙ፣ ከሰራተኞች ጋር ይወያዩ እና በጣም ተስማሚውን ይምረጡ"
+      },
+      "step4": {
+        "title": "ይጨርሱት",
+        "description": "ሰራተኛው ስራዎን ያጠናቅቃል። እርስዎ ይገመግሙ እና በደህንነት ይክፈሉ"
+      }
+    },
+    "cta": {
+      "title": "ለመጀመር ዝግጁ ነዎት?",
+      "subtitle": "በበተኛ በየቀኑ ስራዎቻቸውን ከሚያጠናቅቁ በሺዎች የሚቆጠሩ ሰዎች ጋር ይቀላቀሉ",
+      "postTask": "የመጀመሪያውን ስራ ያስቀምጡ",
+      "browseTasks": "ሊገኙ የሚችሉ ስራዎችን አስስ"
+    }
+  },
+  "browseTasks": {
+    "title": "ሊገኙ የሚችሉ ስራዎችን አስስ",
+    "subtitle": "ከእርስዎ ችሎታ ጋር የሚዛመዱ ስራዎችን ያግኙ እና ገንዘብ ያግኙ",
+    "searchPlaceholder": "ስራዎችን በርዕስ ወይም መግለጫ ይፈልጉ...",
+    "filterCategory": "ምድብ",
+    "filterCity": "ከተማ",
+    "allCategories": "ሁሉም ምድቦች",
+    "allCities": "ሁሉም ከተሞች",
+    "resultsCount": "{{count}} ስራ ተገኝቷል",
+    "resultsCount_other": "{{count}} ስራዎች ተገኝተዋል",
+    "noTasksTitle": "ምንም ስራዎች አልተገኙም",
+    "noTasksMessage": "የፍለጋዎን ወይም ማጣሪያዎችን ማስተካከል ይሞክሩ",
+    "clearFilters": "ማጣሪያዎችን አጽዳ",
+    "noOpenTasksTitle": "እስካሁን ክፍት ስራ የለም",
+    "noOpenTasksMessage": "የመጀመሪያውን ስራ በመለጠፍ ከሰራተኞች ቅናሾችን ይቀበሉ።",
+    "postTaskCta": "ስራ ለጥፍ",
+    "refreshCta": "እንደገና አድስ",
+    "guestEmptyTitle": "አሁን የሚገኝ ስራ የለም",
+    "guestEmptyMessage": "የመጀመሪያ ስራዎን ለመለጠፍ እና ቅናሾችን ለመቀበል መለያ ይፍጠሩ።",
+    "signupCta": "መለያ ፍጠር",
+    "budget": "በጀት",
+    "postedBy": "ያስቀመጠው",
+    "neededBy": "የሚያስፈልገው በ"
+  },
+  "myTasks": {
+    "title": "የእኔ ስራዎች",
+    "subtitle": "ያስቀመጧቸውን ስራዎች፣ የተደረጉ ቅናሾች እና ተወዳጆችን ይከታተሉ",
+    "tabs": {
+      "posted": "የተለጠፉ ስራዎች",
+      "postedShort": "የተለጠፉ",
+      "offers": "የእኔ ቅናሾች",
+      "offersShort": "ቅናሾች",
+      "favorites": "ተወዳጆች",
+      "favoritesShort": "የተቀመጡ"
+    },
+    "noPostedTasks": {
+      "title": "እስካሁን ያስቀመጡት ስራ የለም",
+      "message": "ከችሎታ ያላቸው ሰራተኞች ቅናሾችን ለማግኘት ስራ በማስቀመጥ ይጀምሩ",
+      "button": "የመጀመሪያውን ስራ ያስቀምጡ"
+    },
+    "noOffers": {
+      "title": "እስካሁን የተደረጉ ቅናሾች የሉም",
+      "message": "ሊገኙ የሚችሉ ስራዎችን ያስሱ እና ገንዘብ ማግኘት ለመጀመር ቅናሾችን ያድርጉ",
+      "button": "ስራዎችን አስስ"
+    },
+    "noFavorites": {
+      "title": "እስካሁን ተወዳጆች የሉም",
+      "message": "የልብ አዶውን በመጫን ለኋላ ላይ ፍላጎት ያሎትን ስራዎች ያስቀምጡ",
+      "button": "ስራዎችን አስስ"
+    },
+    "yourOffer": "የእርስዎ ቅናሽ"
+  },
+  "postTask": {
+    "title": "አዲስ ስራ ለጥፍ",
+    "subtitle": "ምን እርዳታ እንደሚያስፈልግዎት ያሳውቁን"
+  },
+  "profile": {
+    "title": "መገለጫ",
+    "subtitle": "መለያዎን እና የሰራተኛ ቅንብሮችዎን ያስተዳድሩ"
+  },
+  "taskCard": {
+    "budget": "ብር {{amount}}",
+    "location": "{{location}}",
+    "neededBy": "የሚያስፈልገው በ {{date}}",
+    "postedBy": "የለጠፈው {{name}}",
+    "postedOn": "የተለጠፈበት {{date}}",
+    "unknownUser": "ያልታወቀ ተጠቃሚ",
+    "addToFavorites": "ወደ ተወዳጆች አክል",
+    "removeFromFavorites": "ከተወዳጆች አስወግድ"
+  },
+  "taskStatus": {
+    "open": "ክፍት",
+    "assigned": "ተመድቧል",
+    "in_progress": "በሂደት ላይ",
+    "completed": "ተጠናቅቋል",
+    "cancelled": "ተሰርዟል"
+  },
+  "offerStatus": {
+    "pending": "በመጠባበቅ ላይ",
+    "accepted": "ተቀባይነት አግኝቷል",
+    "rejected": "ተቀባይነት አላገኘም",
+    "withdrawn": "ተመልሷል"
+  },
+  "categories": {
+    "cleaning": "ጽዳት",
+    "repair": "ጥገና እና መጠገን",
+    "delivery": "መላኪያ እና ማንቀሳቀስ",
+    "market": "ገበያ ግዢ",
+    "event": "የዝግጅት አገልግሎቶች",
+    "farming": "እርሻ እና ግብርና",
+    "errand": "ስራ እና የግል ረዳት",
+    "other": "ሌላ"
+  },
+  "cities": {
+    "addis_ababa": "አዲስ አበባ",
+    "dire_dawa": "ድሬዳዋ",
+    "hawassa": "ሐዋሳ",
+    "bahir_dar": "ባህር ዳር",
+    "adama": "አዳማ",
+    "mekelle": "መቐለ",
+    "jimma": "ጅማ"
+  },
+  "common": {
+    "loading": "በመጫን ላይ...",
+    "save": "አስቀምጥ",
+    "cancel": "ሰርዝ",
+    "edit": "አስተካክል",
+    "delete": "ሰርዝ",
+    "close": "ዝጋ",
+    "submit": "ላክ",
+    "search": "ፈልግ",
+    "filter": "አጣራ",
+    "viewDetails": "ዝርዝሮችን ይመልከቱ",
+    "backToHome": "ወደ መነሻ ተመለስ"
+  }
+}

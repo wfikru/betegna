@@ -2,14 +2,18 @@ import { useState, useEffect } from "react";
 import { api } from "@/api/firebaseClient";
 import { createPageUrl } from "@/utils";
 import { Link, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Clock, Search, SlidersHorizontal, ChevronRight, Filter } from "lucide-react";
+import { MapPin, Clock, Search, SlidersHorizontal, ChevronRight, Filter, ChevronDown } from "lucide-react";
 import CategoryBadge, { taskCategories } from "@/components/shared/CategoryBadge";
+import TaskCard from "@/components/shared/TaskCard";
 import StarRating from "@/components/shared/StarRating";
 import { format } from "date-fns";
+
+const TASKS_PER_PAGE = 20;
 
 const statusColors = {
   open: "bg-green-100 text-green-700",
@@ -21,12 +25,15 @@ const statusColors = {
 
 export default function BrowseTasks() {
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
   /** @type {[import("../types/entities").Task[], Function]} */
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [categoryFilter, setCategoryFilter] = useState(searchParams.get("category") || "all");
   const [cityFilter, setCityFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     loadTasks();
@@ -35,14 +42,36 @@ export default function BrowseTasks() {
   const loadTasks = async () => {
     setLoading(true);
     try {
-      const data = await api.entities.Task.filter({ status: "open" }, "-created_date", 50);
+      const data = await api.entities.Task.filter({ status: "open" }, "-created_date", TASKS_PER_PAGE);
       setTasks(data);
+      setCurrentPage(0);
+      setHasMore(data.length === TASKS_PER_PAGE);
     } catch (err) {
       console.warn("Error loading tasks, falling back to unsorted query:", err.message);
-      const data = await api.entities.Task.filter({ status: "open" }, "", 50);
+      const data = await api.entities.Task.filter({ status: "open" }, "", TASKS_PER_PAGE);
       setTasks(data);
+      setCurrentPage(0);
+      setHasMore(data.length === TASKS_PER_PAGE);
     }
     setLoading(false);
+  };
+
+  const loadMore = async () => {
+    try {
+      const offset = (currentPage + 1) * TASKS_PER_PAGE;
+      const data = await api.entities.Task.filter(
+        { status: "open" },
+        "-created_date",
+        TASKS_PER_PAGE * 2,
+        offset
+      );
+      setTasks((prev) => [...prev, ...data]);
+      setCurrentPage((prev) => prev + 1);
+      setHasMore(data.length === TASKS_PER_PAGE);
+    } catch (err) {
+      console.warn("Error loading more tasks:", err.message);
+      setHasMore(false);
+    }
   };
 
   const filtered = tasks.filter((t) => {
@@ -57,8 +86,8 @@ export default function BrowseTasks() {
       {/* Header Section */}
       <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-12">
         <div className="max-w-6xl mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">Browse Available Tasks</h1>
-          <p className="text-green-50 text-lg">Find tasks that match your skills and earn money</p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-3">{t('browseTasks.title')}</h1>
+          <p className="text-green-50 text-lg">{t('browseTasks.subtitle')}</p>
         </div>
       </div>
 
@@ -70,7 +99,7 @@ export default function BrowseTasks() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input
-                  placeholder="Search tasks by title or description..."
+                  placeholder={t('browseTasks.searchPlaceholder')}
                   className="pl-10 h-11"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -80,11 +109,11 @@ export default function BrowseTasks() {
                 <SelectTrigger className="w-full md:w-52 h-11">
                   <div className="flex items-center gap-2">
                     <Filter className="w-4 h-4" />
-                    <SelectValue placeholder="Category" />
+                    <SelectValue placeholder={t('browseTasks.filterCategory')} />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="all">{t('browseTasks.allCategories')}</SelectItem>
                   {taskCategories.map((c) => (
                     <SelectItem key={c.id} value={c.id}>{c.nameEn}</SelectItem>
                   ))}
@@ -94,18 +123,18 @@ export default function BrowseTasks() {
                 <SelectTrigger className="w-full md:w-48 h-11">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
-                    <SelectValue placeholder="City" />
+                    <SelectValue placeholder={t('browseTasks.filterCity')} />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Cities</SelectItem>
-                  <SelectItem value="addis_ababa">Addis Ababa</SelectItem>
-                  <SelectItem value="dire_dawa">Dire Dawa</SelectItem>
-                  <SelectItem value="hawassa">Hawassa</SelectItem>
-                  <SelectItem value="bahir_dar">Bahir Dar</SelectItem>
-                  <SelectItem value="adama">Adama</SelectItem>
-                  <SelectItem value="mekelle">Mekelle</SelectItem>
-                  <SelectItem value="jimma">Jimma</SelectItem>
+                  <SelectItem value="all">{t('browseTasks.allCities')}</SelectItem>
+                  <SelectItem value="addis_ababa">{t('cities.addis_ababa')}</SelectItem>
+                  <SelectItem value="dire_dawa">{t('cities.dire_dawa')}</SelectItem>
+                  <SelectItem value="hawassa">{t('cities.hawassa')}</SelectItem>
+                  <SelectItem value="bahir_dar">{t('cities.bahir_dar')}</SelectItem>
+                  <SelectItem value="adama">{t('cities.adama')}</SelectItem>
+                  <SelectItem value="mekelle">{t('cities.mekelle')}</SelectItem>
+                  <SelectItem value="jimma">{t('cities.jimma')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -113,7 +142,7 @@ export default function BrowseTasks() {
             {/* Results count */}
             <div className="mt-4 pt-4 border-t border-gray-100">
               <p className="text-sm text-gray-600">
-                <span className="font-semibold text-gray-900">{filtered.length}</span> {filtered.length === 1 ? 'task' : 'tasks'} found
+                <span className="font-semibold text-gray-900">{filtered.length}</span> {t('browseTasks.resultsCount', { count: filtered.length })}
               </p>
             </div>
           </CardContent>
@@ -131,61 +160,30 @@ export default function BrowseTasks() {
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
                 <Search className="w-8 h-8 text-gray-400" />
               </div>
-              <p className="text-lg font-semibold text-gray-900 mb-2">No tasks found</p>
-              <p className="text-gray-500">Try adjusting your search or filters</p>
+              <p className="text-lg font-semibold text-gray-900 mb-2">{t('browseTasks.noTasksTitle')}</p>
+              <p className="text-gray-500">{t('browseTasks.noTasksMessage')}</p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid md:grid-cols-2 gap-5">
-            {filtered.map((task) => (
-              <Link key={task.id} to={createPageUrl(`TaskDetail?id=${task.id}`)}>
-                <Card className="h-full hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-green-300 group">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <CategoryBadge categoryId={task.category} />
-                      {(task.budget_max || task.budget_min) && (
-                        <div className="text-right">
-                          <div className="font-bold text-green-700 text-xl">
-                            ETB {task.budget_max && task.budget_min !== task.budget_max 
-                              ? `${task.budget_min}–${task.budget_max}` 
-                              : task.budget_max || task.budget_min}
-                          </div>
-                          <p className="text-xs text-gray-500">Budget</p>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <h3 className="font-bold text-xl text-gray-900 mb-2 line-clamp-2 group-hover:text-green-700 transition-colors leading-tight">
-                      {task.title}
-                    </h3>
-                    
-                    <p className="text-gray-600 text-sm line-clamp-3 mb-4 leading-relaxed">
-                      {task.description}
-                    </p>
-
-                    <div className="flex flex-col gap-2.5 pt-4 border-t border-gray-100">
-                      {task.location && (
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          <span className="truncate">{task.location}</span>
-                        </div>
-                      )}
-                      {task.date_needed && (
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          <span>Needed by {format(new Date(task.date_needed), "MMM d, yyyy")}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500">Posted by {task.poster_name || "Anonymous"}</span>
-                        <ChevronRight className="w-5 h-5 text-green-600 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+          <>
+            <div className="grid md:grid-cols-2 gap-5">
+              {filtered.map((task) => (
+                <TaskCard key={task.id} task={task} showFavoriteButton={true} />
+              ))}
+            </div>
+            {hasMore && (
+              <div className="flex justify-center mt-8">
+                <Button
+                  onClick={loadMore}
+                  variant="outline"
+                  className="flex items-center gap-2 px-6 py-2"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                  Load More
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

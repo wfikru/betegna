@@ -10,6 +10,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Notifications from './pages/Notifications';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { NotificationProvider } from '@/lib/NotificationContext';
+import { MessageProvider } from '@/lib/MessageContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -111,12 +112,14 @@ function App() {
   return (
     <AuthProvider>
       <NotificationProvider>
-        <QueryClientProvider client={queryClientInstance}>
-          <Router>
-            <AuthenticatedApp />
-          </Router>
-          <Toaster />
-        </QueryClientProvider>
+        <MessageProvider>
+          <QueryClientProvider client={queryClientInstance}>
+            <Router>
+              <AuthenticatedApp />
+            </Router>
+            <Toaster />
+          </QueryClientProvider>
+        </MessageProvider>
       </NotificationProvider>
     </AuthProvider>
   )

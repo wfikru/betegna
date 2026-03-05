@@ -144,6 +144,19 @@ const entities = {
     /** @param {string} id @param {Partial<Notification>} data */
     update: (id, data) => updateDoc(doc(db, "notifications", id), data),
   },
+  Favorite: {
+    /**
+     * @param {Partial<Favorite>} conds
+     * @param {string} sort
+     * @param {number} lim
+     * @returns {Promise<Favorite[]>}
+     */
+    filter: (conds, sort, lim) => buildFilter("favorites", conds, sort, lim),
+    /** @param {Omit<Favorite, 'id'>} data */
+    create: (data) => addDoc(collection(db, "favorites"), { ...data, created_date: new Date().toISOString() }),
+    /** @param {string} id */
+    delete: (id) => deleteDoc(doc(db, "favorites", id)),
+  },
   Message: {
     /**
      * @param {Partial<Message>} conds

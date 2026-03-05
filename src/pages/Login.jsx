@@ -31,6 +31,6 @@ export default function Login() {
   }
 
   return (
-    <LoginModal onCancel={() => navigate("/")} />
+    <LoginModal onCancel={() => navigate(-1)} />
   );
 }

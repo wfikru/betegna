@@ -22,8 +22,7 @@ export default function PostTask() {
     title: "",
     description: "",
     category: "other",
-    budget_min: "",
-    budget_max: "",
+    budget: "",
     location: "",
     city: "addis_ababa",
     date_needed: "",
@@ -35,13 +34,13 @@ export default function PostTask() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.title || !form.description || !form.budget_min || !form.budget_max) return;
+    if (!form.title || !form.description || !form.budget) return;
     setLoading(true);
     try {
+      const budget = Number(form.budget);
       await api.entities.Task.create({
         ...form,
-        budget_min: Number(form.budget_min),
-        budget_max: Number(form.budget_max),
+        budget,
         poster_name: user?.full_name || user?.email || "Anonymous",
         created_by: user?.email || "",
         status: "open",
@@ -152,28 +151,15 @@ export default function PostTask() {
               <DollarSign className="w-4 h-4 text-green-600" /> Budget (ETB)
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-3">
+          <CardContent>
             <div>
-              <Label htmlFor="budget_min">Min *</Label>
+              <Label htmlFor="budget">Price *</Label>
               <Input
-                id="budget_min"
-                type="number"
-                placeholder="100"
-                value={form.budget_min}
-                onChange={(e) => set("budget_min", e.target.value)}
-                required
-                min="0"
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="budget_max">Max *</Label>
-              <Input
-                id="budget_max"
+                id="budget"
                 type="number"
                 placeholder="500"
-                value={form.budget_max}
-                onChange={(e) => set("budget_max", e.target.value)}
+                value={form.budget}
+                onChange={(e) => set("budget", e.target.value)}
                 required
                 min="0"
                 className="mt-1"
@@ -228,19 +214,19 @@ export default function PostTask() {
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="date_needed">Date</Label>
+              <Label htmlFor="date_needed" className="text-xs sm:text-sm">Date</Label>
               <Input
                 id="date_needed"
                 type="date"
                 value={form.date_needed}
                 onChange={(e) => set("date_needed", e.target.value)}
-                className="mt-1"
+                className="mt-1 text-xs sm:text-sm"
               />
             </div>
             <div>
-              <Label>Time Preference</Label>
+              <Label className="text-xs sm:text-sm">Time Preference</Label>
               <Select value={form.time_preference} onValueChange={(v) => set("time_preference", v)}>
-                <SelectTrigger className="mt-1">
+                <SelectTrigger className="mt-1 text-xs sm:text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

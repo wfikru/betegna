@@ -30,13 +30,9 @@
       ],
       "description": "Category of the task"
     },
-    "budget_min": {
+    "budget": {
       "type": "number",
-      "description": "Minimum budget in ETB"
-    },
-    "budget_max": {
-      "type": "number",
-      "description": "Maximum budget in ETB"
+      "description": "Task budget in ETB"
     },
     "location": {
       "type": "string",

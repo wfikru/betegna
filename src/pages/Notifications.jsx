@@ -63,16 +63,13 @@ export default function Notifications() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 pb-24 md:pb-6">
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-1 text-gray-500 hover:text-gray-700 text-sm mb-4"
-      >
-        <ChevronLeft className="w-4 h-4" /> Back
-      </button>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-1">Notifications</h1>
+        <p className="text-gray-500 text-sm">Stay updated on your tasks and offers</p>
+      </div>
 
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
-        {notifications.length > 0 && (
+      {notifications.length > 0 && (
+        <div className="flex justify-end mb-4">
           <Button
             variant="outline"
             size="sm"
@@ -81,8 +78,8 @@ export default function Notifications() {
           >
             Mark all as read
           </Button>
-        )}
-      </div>
+        </div>
+      )}
 
       {notifications.length === 0 ? (
         <Card>
