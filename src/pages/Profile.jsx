@@ -9,11 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Star, CheckCircle, Briefcase } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { User, Star, CheckCircle, Briefcase, Trash2, FileText } from "lucide-react";
 import { taskCategories } from "@/components/shared/CategoryBadge";
 import StarRating from "@/components/shared/StarRating";
 import LoginModal from "@/components/LoginModal";
 import { format } from "date-fns";
+import { createPageUrl } from "@/utils";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -24,6 +26,8 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [form, setForm] = useState({
     bio: "",
     phone: "",
@@ -94,6 +98,21 @@ export default function Profile() {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
     loadData();
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await api.auth.deleteAccount();
+      // Account deleted successfully, will auto-redirect to login via auth state change
+    } catch (err) {
+      setDeleting(false);
+      if (err.code === 'auth/requires-recent-login') {
+        alert("For security, please log out and log back in before deleting your account.");
+      } else {
+        alert("Failed to delete account: " + (err.message || "Unknown error"));
+      }
+    }
   };
 
   if (isLoadingAuth) {
@@ -253,11 +272,49 @@ export default function Profile() {
         <Button
           variant="outline"
           className="w-full"
+          onClick={() => navigate(createPageUrl("Legal"))}
+        >
+          <FileText className="w-4 h-4 mr-2" /> Privacy & Terms
+        </Button>
+
+        <Button
+          variant="outline"
+          className="w-full"
           onClick={() => api.auth.logout()}
         >
           Log Out
         </Button>
+
+        <Button
+          variant="outline"
+          className="w-full border-red-300 text-red-700 hover:bg-red-50"
+          onClick={() => setShowDeleteDialog(true)}
+        >
+          <Trash2 className="w-4 h-4 mr-2" /> Delete Account
+        </Button>
       </div>
+
+      {/* Delete Account Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent className="w-[calc(100vw-2rem)] max-w-md sm:w-full">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Account?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete your account, profile, and all associated data including tasks, offers, reviews, and messages. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAccount}
+              disabled={deleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {deleting ? "Deleting..." : "Delete Permanently"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Reviews */}
       {reviews.length > 0 && (

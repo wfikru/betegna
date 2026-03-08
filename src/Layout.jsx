@@ -30,9 +30,11 @@ export default function Layout({ children, currentPageName }) {
   const isHomePage = currentPageName === "Home";
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-[100dvh] bg-background flex flex-col" style={{
+      paddingBottom: isHomePage ? '0' : 'calc(64px + var(--safe-area-inset-bottom))'
+    }}>
       {/* Professional Header */}
-      <header className="bg-white border-b border-gray-200/80 sticky top-0 z-40 shadow-sm">
+      <header className="bg-white border-b border-gray-200/80 sticky top-0 z-40 shadow-sm" style={{ paddingTop: 'var(--safe-area-inset-top)' }}>
         <div className="w-full md:max-w-7xl md:mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
           {/* Logo Section */}
           <Link to={createPageUrl("Home")} className="flex items-center gap-3 flex-shrink-0 hover:opacity-80 transition-opacity">
@@ -224,15 +226,16 @@ export default function Layout({ children, currentPageName }) {
       </header>
 
       {/* Page Content */}
-      <main className={`flex-1 ${
-        isHomePage ? "" : "pb-20 md:pb-0"
-      }`}>
+      <main className="flex-1">
         {children}
       </main>
 
       {/* Mobile Bottom Navigation - Native App Style */}
       {!isHomePage && (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200/50 z-40 safe-area-inset-bottom">
+        <nav className="md:hidden fixed left-0 right-0 bg-white border-t border-gray-200/50 z-40" style={{ 
+          bottom: 0,
+          paddingBottom: 'var(--safe-area-inset-bottom)'
+        }}>
           <div className="flex">
             {[
               { labelKey: "nav.browseTasks", shortKey: "Explore", page: "BrowseTasks", icon: List },

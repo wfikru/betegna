@@ -5,13 +5,26 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:host": "vite --host 0.0.0.0 --port 5173",
     "build": "vite build",
     "lint": "eslint . --quiet",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -p ./jsconfig.json",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:android": "npm run cap:sync && npx cap open android",
+    "cap:ios": "npm run cap:sync && npx cap open ios",
+    "cap:android:live": "npx cap run android --livereload --external",
+    "cap:ios:live": "npx cap run ios --livereload --external",
+    "testlab:build": "npm run cap:sync && cd android && JAVA_HOME=/usr/local/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home PATH=/usr/local/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home/bin:$PATH ./gradlew assembleDebug && cd ..",
+    "testlab:robo": "/tmp/google-cloud-sdk/bin/gcloud firebase test android run --type robo --app android/app/build/outputs/apk/debug/app-debug.apk --device model=oriole,version=33,locale=en,orientation=portrait --timeout 5m",
+    "testlab:devices": "/tmp/google-cloud-sdk/bin/gcloud firebase test android models list"
   },
   "dependencies": {
+    "@capacitor/android": "^8.1.0",
+    "@capacitor/cli": "^6.2.1",
+    "@capacitor/core": "^8.1.0",
+    "@capacitor/ios": "^8.1.0",
     "@hello-pangea/dnd": "^17.0.0",
     "@hookform/resolvers": "^4.1.2",
     "@radix-ui/react-accordion": "^1.2.3",

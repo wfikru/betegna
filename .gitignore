@@ -29,3 +29,13 @@ dist-ssr
 
 .env
 scripts
+
+# Release artifacts
+*.ipa
+*.aab
+ios/App-debug.zip
+
+# Xcode local build output
+ios/build/
+ios/build-release/
+ios/Payload/

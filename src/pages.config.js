@@ -55,6 +55,7 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Messages from './pages/Messages';
 import Home from './pages/Home';
+import Legal from './pages/Legal';
 import __Layout from './Layout.jsx';
 
 
@@ -67,6 +68,7 @@ export const PAGES = {
     "Profile": Profile,
     "Login": Login,
     "Messages": Messages,
+    "Legal": Legal,
 }
 
 export const pagesConfig = {

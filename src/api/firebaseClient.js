@@ -19,8 +19,10 @@ import {
   signInWithPopup,
   signInWithRedirect,
   createUserWithEmailAndPassword,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  deleteUser
 } from "firebase/auth";
+import { Capacitor } from "@capacitor/core";
 import {
   collection,
   query,
@@ -77,7 +79,11 @@ const buildFilter = async (collectionName, conditions = {}, sort = "", lim = 0) 
       // retry without sorting (query only by filters)
       let fallback = collection(db, collectionName);
       Object.entries(conditions).forEach(([k, v]) => {
-        fallback = query(fallback, where(k, "==", v));
+        if (k === "id") {
+          fallback = query(fallback, where(documentId(), "==", v));
+        } else {
+          fallback = query(fallback, where(k, "==", v));
+        }
       });
       if (lim) {
         fallback = query(fallback, limitFn(lim));
@@ -170,6 +176,11 @@ const entities = {
     /** @param {string} id @param {Partial<Message>} data */
     update: (id, data) => updateDoc(doc(db, "messages", id), data),
   },
+  Report: {
+    filter: (conds, sort, lim) => buildFilter("reports", conds, sort, lim),
+    create: (data) => addDoc(collection(db, "reports"), { ...data, created_date: new Date().toISOString() }),
+    update: (id, data) => updateDoc(doc(db, "reports", id), data),
+  },
 };
 
 const authWrapper = {
@@ -240,7 +251,15 @@ const authWrapper = {
     // optional: restrict to specific hosted domain (e.g., your organization)
     // provider.setCustomParameters({ hd: 'example.com' });
 
+    const isNative = Capacitor.isNativePlatform();
+
     try {
+      // Popups are unreliable in mobile webviews (especially iOS WKWebView).
+      // Use redirect flow directly on native platforms.
+      if (isNative) {
+        return signInWithRedirect(auth, provider);
+      }
+
       return await signInWithPopup(auth, provider);
     } catch (err) {
       const code = err?.code || "";
@@ -260,6 +279,16 @@ const authWrapper = {
   },
   // password reset email
   resetPassword: (email) => sendPasswordResetEmail(auth, email),
+  // account deletion (requires recent authentication)
+  deleteAccount: async () => {
+    const user = auth.currentUser;
+    if (!user) return Promise.reject(new Error("Not authenticated"));
+    // Delete user document from Firestore first
+    const userRef = doc(db, "users", user.uid);
+    await deleteDoc(userRef);
+    // Then delete the auth account
+    await user.delete();
+  },
 };
 
 export const api = {

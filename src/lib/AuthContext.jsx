@@ -4,8 +4,10 @@ import {
   onAuthStateChanged,
   getRedirectResult,
   setPersistence,
+  indexedDBLocalPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
+  inMemoryPersistence,
 } from 'firebase/auth';
 
 const AuthContext = createContext();
@@ -18,15 +20,27 @@ export const AuthProvider = ({ children }) => {
 
   // listen for firebase auth state changes and keep context in sync
   useEffect(() => {
-    // Ensure auth state survives redirects/reloads, especially on mobile browsers
-    setPersistence(auth, browserLocalPersistence).catch(async (err) => {
-      console.warn('Failed to set local auth persistence, falling back to session:', err?.message || err);
-      try {
-        await setPersistence(auth, browserSessionPersistence);
-      } catch (err2) {
-        console.warn('Failed to set session auth persistence:', err2?.message || err2);
+    const configurePersistence = async () => {
+      // Progressive fallback for web + mobile webviews.
+      // iOS WKWebView can occasionally reject one strategy depending on device state.
+      const strategies = [
+        indexedDBLocalPersistence,
+        browserLocalPersistence,
+        browserSessionPersistence,
+        inMemoryPersistence,
+      ];
+
+      for (const strategy of strategies) {
+        try {
+          await setPersistence(auth, strategy);
+          return;
+        } catch (err) {
+          console.warn('Auth persistence setup failed for strategy, trying next:', err?.message || err);
+        }
       }
-    });
+    };
+
+    configurePersistence();
 
     // Resolve redirect-based Google sign-in results (mobile flow)
     getRedirectResult(auth).then((result) => {

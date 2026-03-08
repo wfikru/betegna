@@ -68,6 +68,70 @@ Run the app: `npm run dev`
 
 After starting the development server open the browser at `http://localhost:5173` (or the port shown by Vite).  
 
+### Mobile development (Capacitor)
+
+Build + sync native projects:
+
+```bash
+npm run cap:sync
+```
+
+Open native projects:
+
+```bash
+npm run cap:android
+npm run cap:ios
+```
+
+Live Reload (Expo Go-like workflow):
+
+1. Start dev server on LAN:
+
+```bash
+npm run dev:host
+```
+
+2. In another terminal, run one target:
+
+```bash
+npm run cap:android:live
+npm run cap:ios:live
+```
+
+Notes:
+
+- Keep laptop and device/emulator on the same network.
+- Live Reload is best for fast iteration; use `npm run cap:sync` before release testing.
+
+### Cloud device testing (Firebase Test Lab)
+
+Test your app on real devices in the cloud:
+
+**Prerequisites:**
+- Android Studio installed
+- Google Cloud SDK installed and authenticated
+- Firebase Test Lab APIs enabled
+- Billing enabled (free tier: 10 physical device tests/day)
+
+**Steps:**
+
+1. Build APK in Android Studio:
+   - Open project: `npm run cap:android`
+   - Build → Build Bundle(s) / APK(s) → Build APK(s)
+   - APK will be at `android/app/build/outputs/apk/debug/app-debug.apk`
+
+2. View available test devices:
+```bash
+npm run testlab:devices
+```
+
+3. Run automated tests on real devices:
+```bash
+npm run testlab:robo
+```
+
+Results are viewable in the Firebase Console with screenshots, logs, and video recordings.
+
 **Note:** Firebase authentication is now active. Users can sign in using email/password or the **Continue with Google** button available on the login screen.
 
 **Setting up Google Sign-In:**

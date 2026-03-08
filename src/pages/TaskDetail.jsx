@@ -48,8 +48,7 @@ export default function TaskDetail() {
   const [loadingUserProfile, setLoadingUserProfile] = useState(false);
   const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
   const [myReview, setMyReview] = useState(null);
-  const [editingReview, setEditingReview] = useState(false);
-
+  const [editingReview, setEditingReview] = useState(false);  const [showReportDialog, setShowReportDialog] = useState(false);
   useEffect(() => {
     loadData();
   }, [taskId]);
@@ -386,6 +385,20 @@ export default function TaskDetail() {
             <span>·</span>
             <span>{format(new Date(task.created_date), "MMM d, yyyy")}</span>
           </div>
+
+          {/* Report Task Button */}
+          {user && !isOwner && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-orange-600 border-orange-200 hover:bg-orange-50"
+                onClick={() => setShowReportDialog(true)}
+              >
+                <AlertTriangle className="w-3 h-3 mr-1" /> Report Task
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -701,6 +714,18 @@ export default function TaskDetail() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Report Dialog */}
+      {task && user && !isOwner && (
+        <ReportDialog
+          open={showReportDialog}
+          onOpenChange={setShowReportDialog}
+          itemType="task"
+          itemId={task.id}
+          reportedUserEmail={task.created_by}
+          itemTitle={task.title}
+        />
+      )}
     </div>
   );
 }

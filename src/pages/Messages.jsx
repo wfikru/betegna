@@ -226,7 +226,7 @@ export default function Messages() {
   // Full-screen chat view
   if (selectedConversation) {
     return (
-      <div className="flex flex-col h-screen md:h-auto md:rounded-lg overflow-hidden bg-white">
+      <div className="flex flex-col h-[100dvh] md:h-auto md:rounded-lg overflow-hidden bg-white">
         {/* Header */}
         <div className="flex-shrink-0 bg-white border-b border-gray-200 px-4 py-4">
           <button 
