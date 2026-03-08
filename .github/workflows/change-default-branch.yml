@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  administration: write
 
 jobs:
   change-default-branch:
@@ -18,13 +19,17 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // Change the default branch to 'master'
-            await github.rest.repos.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              default_branch: 'master',
-            });
-            console.log('Default branch changed to master');
+            try {
+              await github.rest.repos.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                default_branch: 'master',
+              });
+              console.log('Default branch changed to master');
+            } catch (error) {
+              core.warning(`Could not change default branch via API: ${error.message}`);
+              core.warning('Please change the default branch manually in repository Settings > Branches.');
+            }
 
       - name: Delete master2 branch
         uses: actions/github-script@v7
@@ -39,9 +44,9 @@ jobs:
               });
               console.log('Branch master2 deleted');
             } catch (error) {
-              if (error.status === 422) {
+              if (error.status === 422 || error.status === 404) {
                 console.log('Branch master2 does not exist, skipping');
               } else {
-                throw error;
+                core.warning(`Could not delete master2 branch: ${error.message}`);
               }
             }
