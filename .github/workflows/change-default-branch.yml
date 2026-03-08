@@ -1,0 +1,48 @@
+name: Change Default Branch to Master and Delete Master2
+
+on:
+  push:
+    branches:
+      - copilot/change-default-branch-to-master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  administration: write
+
+jobs:
+  change-default-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Change default branch to master
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Change the default branch to 'master'
+            await github.rest.repos.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              default_branch: 'master',
+            });
+            console.log('Default branch changed to master');
+
+      - name: Delete master2 branch
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'heads/master2',
+              });
+              console.log('Branch master2 deleted');
+            } catch (error) {
+              if (error.status === 422) {
+                console.log('Branch master2 does not exist, skipping');
+              } else {
+                throw error;
+              }
+            }
