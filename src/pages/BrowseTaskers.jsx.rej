@@ -1,0 +1,39 @@
+diff a/src/pages/BrowseTaskers.jsx b/src/pages/BrowseTaskers.jsx	(rejected hunks)
+@@ -1,14 +1,14 @@
+ import { useState, useEffect } from "react";
+ import { useNavigate, useSearchParams } from "react-router-dom";
+ import { api } from "@/api/firebaseClient";
+-import { createPageUrl } from "@/utils";
++import { createPageUrl, getFallbackTaskerPhoto } from "@/utils";
+ import { useAuth } from "@/lib/AuthContext";
+ import { taskCategories } from "@/components/shared/CategoryBadge";
+ import StarRating from "@/components/shared/StarRating";
+ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+ import {
+   Search, MapPin, ArrowRight, PlusCircle, Star, CheckCircle,
+-  MessageCircle, Briefcase, ChevronDown
++  MessageCircle, Briefcase, ChevronDown, ShieldCheck
+ } from "lucide-react";
+ 
+ const CITIES = [
+@@ -27,11 +27,18 @@ function TaskerCard({ tasker, onBook, onView }) {
+   const skills = (tasker.skills || []).slice(0, 3);
+   const cityLabel = CITIES.find(c => c.value === tasker.city)?.label || tasker.city || "";
+ 
+-  const photo = tasker.photo_url || `https://source.unsplash.com/collection/888146/400x300?sig=${tasker.id || Math.random()}`;
++  const photo = tasker.photo_url || getFallbackTaskerPhoto(tasker.id);
+ 
+   return (
+     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group">
+-      <div className="h-40 bg-cover bg-center" style={{ backgroundImage: `url(${photo})` }} />
++      <div className="relative h-44 bg-cover bg-center" style={{ backgroundImage: `url(${photo})` }}>
++        {tasker.is_verified && (
++          <div className="absolute top-3 left-3 bg-green-700/90 backdrop-blur-sm text-white text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow">
++            <ShieldCheck className="w-3.5 h-3.5" />
++            <span>Verified</span>
++          </div>
++        )}
++      </div>
+       <div className="p-5">
+         <div className="flex items-start gap-4 mb-2">
+           <div className="flex-1 min-w-0">

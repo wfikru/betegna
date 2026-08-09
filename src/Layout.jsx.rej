@@ -1,0 +1,282 @@
+diff a/src/Layout.jsx b/src/Layout.jsx	(rejected hunks)
+@@ -7,12 +7,10 @@ import { useMessages } from "@/lib/MessageContext";
+ import { useTranslation } from "react-i18next";
+ import { api } from "@/api/firebaseClient";
+ import {
+-  List, ClipboardList, User, Menu, X, Bell, LogOut, MessageCircle
++  List, ClipboardList, User, Menu, X, Bell, LogOut, MessageCircle, PlusCircle, Briefcase, Search, ShieldCheck
+ } from "lucide-react";
+ import Logo from "@/components/Logo";
+ 
+-
+-
+ export default function Layout({ children, currentPageName }) {
+   const { user, logout } = useAuth();
+   const { unreadCount } = useNotifications();
+@@ -29,7 +27,7 @@ export default function Layout({ children, currentPageName }) {
+ 
+   return (
+     <div className="min-h-[100dvh] bg-background flex flex-col" style={{
+-      paddingBottom: 'calc(64px + var(--safe-area-inset-bottom))'
++      paddingBottom: 'calc(68px + var(--safe-area-inset-bottom))'
+     }}>
+       {/* Professional Header */}
+       <header className="bg-white border-b border-gray-200/80 sticky top-0 z-40 shadow-sm" style={{ paddingTop: 'var(--safe-area-inset-top)' }}>
+@@ -42,7 +40,8 @@ export default function Layout({ children, currentPageName }) {
+           {/* Desktop Navigation */}
+           <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+             {[
+-              { label: "Browse", page: "BrowseTaskers", icon: List },
++              { label: "Hire Taskers", page: "BrowseTaskers", icon: List },
++              { label: "Open Tasks", page: "BrowseTasks", icon: Briefcase },
+               { label: "My Bookings", page: "MyBookings", icon: ClipboardList },
+               { label: "Messages", page: "Messages", icon: MessageCircle },
+             ].map(({ label, page, icon: Icon }) => {
+@@ -71,10 +70,17 @@ export default function Layout({ children, currentPageName }) {
+           </nav>
+ 
+           {/* Right Section - Actions */}
+-          <div className="flex items-center gap-1 lg:gap-2">
+-            {/* Language Toggle removed — translations disabled */}
++          <div className="flex items-center gap-2 lg:gap-3">
++            {/* Post a Task CTA Button (Desktop & Tablet) */}
++            <Link
++              to={createPageUrl("PostTask")}
++              className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-green-700 hover:bg-green-800 text-white text-sm font-bold shadow-sm hover:shadow transition-all"
++            >
++              <PlusCircle className="w-4 h-4" />
++              <span>Post a Task</span>
++            </Link>
+ 
+-            {user && (
++            {user ? (
+               <>
+                 {/* Notifications Bell */}
+                 <button
+@@ -90,7 +96,7 @@ export default function Layout({ children, currentPageName }) {
+                   )}
+                 </button>
+ 
+-                {/* Profile Section */}
++                {/* Profile Section (Desktop) */}
+                 <div className="hidden md:flex items-center gap-2 pl-3 border-l border-gray-200">
+                   <Link
+                     to={createPageUrl("Profile")}
+@@ -100,12 +106,15 @@ export default function Layout({ children, currentPageName }) {
+                         : "hover:bg-gray-100 text-gray-700"
+                     }`}
+                   >
+-                    <div className="w-8 h-8 rounded-full bg-green-700 flex items-center justify-center text-white text-xs font-bold">
++                    <div className="w-8 h-8 rounded-full bg-green-700 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                       {(user.full_name || user.email || "?")[0].toUpperCase()}
+                     </div>
+                     <div className="text-left">
+                       <p className="text-sm font-medium text-gray-900 leading-tight">{user.full_name?.split(' ')[0] || 'User'}</p>
+-                      <p className="text-xs text-gray-500 leading-tight">{user.is_tasker ? 'Tasker' : 'Client'}</p>
++                      <p className="text-xs text-gray-500 leading-tight flex items-center gap-1">
++                        {user.is_tasker ? 'Tasker' : 'Client'}
++                        {user.is_verified && <ShieldCheck className="w-3 h-3 text-green-600" />}
++                      </p>
+                     </div>
+                   </Link>
+                   <button
+@@ -118,7 +127,31 @@ export default function Layout({ children, currentPageName }) {
+                     <LogOut className="w-4 h-4" />
+                   </button>
+                 </div>
++
++                {/* Profile Avatar Quick-Tap (Mobile only) */}
++                <Link
++                  to={createPageUrl("Profile")}
++                  className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-green-700 text-white text-xs font-bold shadow-sm"
++                  title="Profile"
++                >
++                  {(user.full_name || user.email || "?")[0].toUpperCase()}
++                </Link>
+               </>
++            ) : (
++              <div className="flex items-center gap-2">
++                <Link
++                  to="/login"
++                  className="px-3.5 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors"
++                >
++                  Log in
++                </Link>
++                <Link
++                  to="/signup"
++                  className="px-4 py-2 rounded-xl bg-green-700 hover:bg-green-800 text-white text-sm font-bold shadow-sm transition-all"
++                >
++                  Sign up
++                </Link>
++              </div>
+             )}
+ 
+             {/* Mobile Menu Toggle */}
+@@ -133,12 +166,14 @@ export default function Layout({ children, currentPageName }) {
+ 
+         {/* Mobile Menu */}
+         {mobileMenuOpen && (
+-          <div className="md:hidden border-t border-gray-100 bg-white px-4 py-2">
++          <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3 shadow-lg">
+             {[
+-              { label: "Browse Taskers", page: "BrowseTaskers", icon: List },
+-              { label: "My Bookings",    page: "MyBookings",    icon: ClipboardList },
+-              { label: "Messages",       page: "Messages",      icon: MessageCircle },
+-              { label: "Profile",        page: "Profile",       icon: User },
++              { label: "Hire Taskers", page: "BrowseTaskers", icon: List },
++              { label: "Open Tasks",   page: "BrowseTasks",   icon: Briefcase },
++              { label: "Post a Task",  page: "PostTask",      icon: PlusCircle },
++              { label: "My Bookings",  page: "MyBookings",    icon: ClipboardList },
++              { label: "Messages",     page: "Messages",      icon: MessageCircle },
++              { label: "Profile",      page: "Profile",       icon: User },
+             ].map(({ label, page, icon: Icon }) => {
+               const active = currentPageName === page;
+               const showBadge = page === "Messages" && unreadMessageCount > 0;
+@@ -147,13 +182,13 @@ export default function Layout({ children, currentPageName }) {
+                   key={page}
+                   to={createPageUrl(page)}
+                   onClick={() => setMobileMenuOpen(false)}
+-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium mb-1 transition-colors relative ${
++                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium mb-1 transition-colors relative ${
+                     active
+-                      ? "bg-green-50 text-green-700"
+-                      : "text-gray-600 hover:bg-gray-50"
++                      ? "bg-green-50 text-green-700 font-bold"
++                      : "text-gray-700 hover:bg-gray-50"
+                   }`}
+                 >
+-                  <Icon className="w-4 h-4" />
++                  <Icon className="w-5 h-5" />
+                   {label}
+                   {showBadge && (
+                     <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+@@ -163,16 +198,33 @@ export default function Layout({ children, currentPageName }) {
+                 </Link>
+               );
+             })}
+-            {user && (
++            {user ? (
+               <button
+                 onClick={() => {
+                   logout().then(() => navigate('/login'));
+                 }}
+-                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium mt-2 text-gray-600 hover:bg-gray-50"
++                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium mt-2 text-red-600 hover:bg-red-50 transition-colors"
+               >
+-                <LogOut className="w-4 h-4" />
+-                {t('nav.logout')}
++                <LogOut className="w-5 h-5" />
++                Log out
+               </button>
++            ) : (
++              <div className="grid grid-cols-2 gap-2 pt-2 mt-2 border-t border-gray-100">
++                <Link
++                  to="/login"
++                  onClick={() => setMobileMenuOpen(false)}
++                  className="w-full text-center py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-700"
++                >
++                  Log in
++                </Link>
++                <Link
++                  to="/signup"
++                  onClick={() => setMobileMenuOpen(false)}
++                  className="w-full text-center py-2.5 rounded-lg bg-green-700 text-white text-sm font-bold"
++                >
++                  Sign up
++                </Link>
++              </div>
+             )}
+           </div>
+         )}
+@@ -184,45 +236,61 @@ export default function Layout({ children, currentPageName }) {
+       </main>
+ 
+       {/* Mobile Bottom Navigation - Native App Style */}
+-      <nav className="md:hidden fixed left-0 right-0 bg-white border-t border-gray-200/50 z-40" style={{
++      <nav className="md:hidden fixed left-0 right-0 bg-white border-t border-gray-200/80 shadow-lg z-40" style={{
+         bottom: 0,
+         paddingBottom: 'var(--safe-area-inset-bottom)'
+       }}>
+-          <div className="flex">
+-            {[
+-              { shortKey: "Explore",   page: "BrowseTaskers", icon: List },
+-              { shortKey: "Bookings",  page: "MyBookings",    icon: ClipboardList },
+-              { shortKey: "Messages",  page: "Messages",      icon: MessageCircle },
+-              { shortKey: "Profile",   page: "Profile",       icon: User },
+-            ].map(({ shortKey, page, icon: Icon }) => {
+-              const active = currentPageName === page;
+-              const showBadge = page === "Messages" && unreadMessageCount > 0;
++        <div className="flex items-center justify-around">
++          {[
++            { shortKey: "Explore",  page: "BrowseTaskers", icon: List },
++            { shortKey: "Tasks",    page: "BrowseTasks",   icon: Briefcase },
++            { shortKey: "Post",     page: "PostTask",      icon: PlusCircle, isCenter: true },
++            { shortKey: "Bookings", page: "MyBookings",    icon: ClipboardList },
++            { shortKey: "Messages", page: "Messages",      icon: MessageCircle },
++          ].map(({ shortKey, page, icon: Icon, isCenter }) => {
++            const active = currentPageName === page;
++            const showBadge = page === "Messages" && unreadMessageCount > 0;
++            if (isCenter) {
+               return (
+                 <Link
+                   key={page}
+                   to={createPageUrl(page)}
+-                  className={`flex-1 flex flex-col items-center justify-center py-2 gap-1 text-xs font-medium transition-colors relative min-h-[64px] ${
+-                    active ? "text-green-700" : "text-gray-500"
+-                  }`}
++                  className="flex-1 flex flex-col items-center justify-center py-1 group"
+                 >
+-                  <div className={`relative flex items-center justify-center w-12 h-7 rounded-full transition-colors ${
+-                    active ? "bg-green-100" : ""
+-                  }`}>
+-                    <Icon className={`w-5 h-5 ${
+-                      active ? "text-green-700" : "text-gray-400"
+-                    }`} />
+-                    {showBadge && (
+-                      <span className="absolute -top-1.5 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-[9px] font-bold leading-none text-white bg-red-600 rounded-full min-w-[18px]">
+-                        {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
+-                      </span>
+-                    )}
++                  <div className="w-11 h-11 rounded-full bg-green-700 text-white flex items-center justify-center shadow-md -mt-3 group-hover:bg-green-800 transition-transform active:scale-95">
++                    <Icon className="w-6 h-6" />
+                   </div>
+-                  <span className={`text-[10px] font-semibold tracking-[-0.01em] ${active ? "text-green-700" : "text-gray-400"}`}>{shortKey}</span>
++                  <span className="text-[10px] font-bold text-green-700 mt-0.5">{shortKey}</span>
+                 </Link>
+               );
+-            })}
+-          </div>
+-        </nav>
++            }
++
++            return (
++              <Link
++                key={page}
++                to={createPageUrl(page)}
++                className={`flex-1 flex flex-col items-center justify-center py-2 gap-1 text-xs font-medium transition-colors relative min-h-[64px] ${
++                  active ? "text-green-700" : "text-gray-500"
++                }`}
++              >
++                <div className={`relative flex items-center justify-center w-11 h-7 rounded-full transition-colors ${
++                  active ? "bg-green-100/80" : ""
++                }`}>
++                  <Icon className={`w-5 h-5 ${
++                    active ? "text-green-700" : "text-gray-400"
++                  }`} />
++                  {showBadge && (
++                    <span className="absolute -top-1.5 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-[9px] font-bold leading-none text-white bg-red-600 rounded-full min-w-[18px]">
++                      {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
++                    </span>
++                  )}
++                </div>
++                <span className={`text-[10px] font-semibold tracking-[-0.01em] ${active ? "text-green-700" : "text-gray-400"}`}>{shortKey}</span>
++              </Link>
++            );
++          })}
++        </div>
++      </nav>
+     </div>
+   );
+-}
+\ No newline at end of file
++}
