@@ -18,7 +18,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 const { Pages, Layout } = pagesConfig;
 
 // Pages that require the user to be logged in
-const PROTECTED_PAGES = new Set(['MyBookings', 'BookTasker', 'BookingDetail', 'Messages', 'Profile']);
+const PROTECTED_PAGES = new Set(['MyBookings', 'BookTasker', 'BookingDetail', 'Messages', 'Profile', 'PostTask', 'MyTasks', 'TaskDetail']);
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>

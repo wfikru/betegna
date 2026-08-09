@@ -5,6 +5,11 @@ import { resolve } from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   logLevel: 'info', // Show server info
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    allowedHosts: true,
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),

@@ -1,3 +1,47 @@
 export function createPageUrl(pageName: string) {
     return '/' + pageName.replace(/ /g, '-');
 }
+
+export const CATEGORY_IMAGES: Record<string, string> = {
+  delivery: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=800&auto=format&fit=crop",
+  event: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=800&auto=format&fit=crop",
+  market: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop",
+  repair: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
+  errand: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=800&auto=format&fit=crop",
+  cleaning: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=800&auto=format&fit=crop",
+  farming: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=800&auto=format&fit=crop",
+  other: "https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=800&auto=format&fit=crop",
+};
+
+export const CATEGORY_PRICING: Record<string, string> = {
+  cleaning: "From 350 ETB/hr",
+  repair: "From 500 ETB/hr",
+  delivery: "From 250 ETB/hr",
+  market: "From 300 ETB/hr",
+  event: "From 600 ETB/hr",
+  farming: "From 400 ETB/hr",
+  errand: "From 280 ETB/hr",
+  other: "From 350 ETB/hr",
+};
+
+export const DEFAULT_TASKER_PHOTOS = [
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=400&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400&auto=format&fit=crop"
+];
+
+export function getCategoryPhoto(id: string): string {
+  return CATEGORY_IMAGES[id] || CATEGORY_IMAGES.other;
+}
+
+export function getFallbackTaskerPhoto(id = ""): string {
+  const str = String(id || "tasker");
+  let sum = 0;
+  for (let i = 0; i < str.length; i++) {
+    sum += str.charCodeAt(i);
+  }
+  return DEFAULT_TASKER_PHOTOS[Math.abs(sum) % DEFAULT_TASKER_PHOTOS.length];
+}

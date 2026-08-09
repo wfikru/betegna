@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "@/api/firebaseClient";
-import { createPageUrl } from "@/utils";
+import { createPageUrl, getFallbackTaskerPhoto } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
 import { taskCategories } from "@/components/shared/CategoryBadge";
 import StarRating from "@/components/shared/StarRating";
@@ -92,7 +92,7 @@ export default function TaskerProfile() {
 
           <div className="flex items-start gap-5">
             <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-white/40 flex items-center justify-center text-white text-2xl font-bold shadow-lg flex-shrink-0">
-              <img src={tasker.photo_url || `https://source.unsplash.com/collection/888146/200x200?sig=${tasker.id || 1}`} alt="tasker" className="w-full h-full object-cover" />
+              <img src={tasker.photo_url || getFallbackTaskerPhoto(tasker.id)} alt="tasker" className="w-full h-full object-cover" />
             </div>
             <div className="flex-1">
               <h1 className="text-2xl font-extrabold leading-tight">{tasker.full_name || "Tasker"}</h1>
