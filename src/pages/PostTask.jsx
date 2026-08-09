@@ -82,11 +82,16 @@ export default function PostTask() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 pb-24 md:pb-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Post a Task</h1>
-        <p className="text-gray-500 text-sm">Describe what you need done and find a tasker</p>
+    <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-10">
+        <div className="max-w-2xl mx-auto px-4">
+          <h1 className="text-3xl font-bold mb-1">Post a Task</h1>
+          <p className="text-green-100 text-base">Describe what you need done and find a skilled tasker</p>
+        </div>
       </div>
+
+      <div className="max-w-2xl mx-auto px-4 -mt-4">
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <Card>
@@ -242,12 +247,13 @@ export default function PostTask() {
 
         <Button
           type="submit"
-          className="w-full bg-green-700 hover:bg-green-800 text-white py-3 text-base"
+          className="w-full bg-green-700 hover:bg-green-800 text-white py-3 text-base font-semibold shadow-md"
           disabled={loading}
         >
           {loading ? "Posting…" : "Post Task"}
         </Button>
       </form>
+      </div>
     </div>
   );
 }

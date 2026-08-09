@@ -48,7 +48,7 @@ module.exports = {
   				'2': 'hsl(var(--chart-2))',
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
+				'5': 'hsl(var(--chart-5))'
   			},
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
@@ -59,7 +59,19 @@ module.exports = {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
+				},
+					green: {
+					50: '#f0f9ff',
+					100: '#e6f6ff',
+					200: '#bfefff',
+					300: '#85e0ff',
+					400: '#33c9ff',
+					500: '#00a3ff',
+					600: '#0086d6',
+					700: '#006bb3',
+					800: '#004d80',
+					900: '#00304d',
+				},
   		},
   		keyframes: {
   			'accordion-down': {
@@ -83,6 +95,11 @@ module.exports = {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}
+			,
+			fontFamily: {
+				'poppins': ["Poppins", "Inter", "system-ui", "-apple-system", "sans-serif"],
+			},
+
   	}
   },
   plugins: [require("tailwindcss-animate")],

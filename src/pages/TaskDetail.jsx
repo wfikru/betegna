@@ -12,7 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { MapPin, Clock, Calendar, User, ChevronLeft, Send, CheckCircle, AlertCircle, Trash2, Edit } from "lucide-react";
+import { MapPin, Clock, Calendar, User, ChevronLeft, Send, CheckCircle, AlertCircle, Trash2, Edit, AlertTriangle } from "lucide-react";
+import ReportDialog from "@/components/ReportDialog";
 import CategoryBadge from "@/components/shared/CategoryBadge";
 import StarRating from "@/components/shared/StarRating";
 import { format } from "date-fns";
@@ -335,18 +336,24 @@ export default function TaskDetail() {
   const s = statusConfig[task.status] || statusConfig.open;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 pb-24 md:pb-6">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-gray-500 hover:text-gray-700 text-sm mb-4">
-        <ChevronLeft className="w-4 h-4" /> Back
-      </button>
-
-      {/* Task Header */}
-      <Card className="mb-4 border border-gray-100">
-        <CardContent className="p-5">
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <h1 className="text-xl font-bold text-gray-900">{task.title}</h1>
-            <span className={`text-xs px-2.5 py-1 rounded-full font-medium shrink-0 ${s.cls}`}>{s.text}</span>
+    <div className="min-h-screen bg-gray-50 pb-24 md:pb-6">
+      {/* Page Header */}
+      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-6">
+        <div className="max-w-2xl mx-auto px-4">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-green-100 hover:text-white text-sm mb-3 transition-colors">
+            <ChevronLeft className="w-4 h-4" /> Back
+          </button>
+          <div className="flex items-center gap-3">
+            <span className={`text-xs px-2.5 py-1 rounded-full font-semibold bg-white/20 text-white border border-white/30`}>{s.text}</span>
           </div>
+          <h1 className="text-2xl font-bold mt-2 leading-tight">{task.title}</h1>
+        </div>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-4 py-4">
+      {/* Task Header */}
+      <Card className="mb-4 border border-gray-100 shadow-sm">
+        <CardContent className="p-5">
           <CategoryBadge categoryId={task.category} />
           <p className="text-gray-600 text-sm mt-3 leading-relaxed">{task.description}</p>
 
@@ -508,9 +515,7 @@ export default function TaskDetail() {
                       onClick={() => viewUserProfile(offer.tasker_email, offer.tasker_name)}
                       title="Click to view profile and reviews"
                     >
-                      <AvatarFallback className="bg-green-700 text-white font-semibold">
-                        {offer.tasker_name.split(' ').map(n => n.charAt(0)).join('').toUpperCase().slice(0, 2)}
-                      </AvatarFallback>
+                      <AvatarFallback name={offer.tasker_name} className="bg-green-700 text-white font-semibold" />
                     </Avatar>
                     <div>
                       <p className="font-semibold text-gray-800">{offer.tasker_name}</p>
@@ -636,9 +641,7 @@ export default function TaskDetail() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Avatar className="w-10 h-10">
-                <AvatarFallback className="bg-green-700 text-white font-semibold">
-                  {selectedUserProfile?.name?.split(' ').map(n => n.charAt(0)).join('').toUpperCase().slice(0, 2)}
-                </AvatarFallback>
+                <AvatarFallback name={selectedUserProfile?.name} className="bg-green-700 text-white font-semibold" />
               </Avatar>
               {selectedUserProfile?.name}
             </DialogTitle>
@@ -726,6 +729,7 @@ export default function TaskDetail() {
           itemTitle={task.title}
         />
       )}
+      </div>
     </div>
   );
 }

@@ -163,11 +163,16 @@ export default function MyTasks() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 pb-24 md:pb-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">{t('myTasks.title')}</h1>
-        <p className="text-gray-500 text-sm">{t('myTasks.subtitle')}</p>
+    <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-10">
+        <div className="max-w-6xl mx-auto px-4">
+          <h1 className="text-3xl font-bold mb-1">{t('myTasks.title')}</h1>
+          <p className="text-green-100 text-base">{t('myTasks.subtitle')}</p>
+        </div>
       </div>
+
+    <div className="max-w-6xl mx-auto px-4 -mt-4">
 
       <div>
         <Tabs defaultValue="posted" className="w-full">
@@ -286,6 +291,7 @@ export default function MyTasks() {
             )}
           </TabsContent>
         </Tabs>
+      </div>
       </div>
     </div>
   );

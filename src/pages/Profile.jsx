@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { User, Star, CheckCircle, Briefcase, Trash2, FileText } from "lucide-react";
+import { User, Star, CheckCircle, Briefcase, Trash2, AlertCircle } from "lucide-react";
 import { taskCategories } from "@/components/shared/CategoryBadge";
 import StarRating from "@/components/shared/StarRating";
 import LoginModal from "@/components/LoginModal";
@@ -26,6 +26,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [errors, setErrors] = useState({ bio: null, skills: null });
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [form, setForm] = useState({
@@ -60,8 +61,13 @@ export default function Profile() {
         skills: u.skills || [],
         hourly_rate: u.hourly_rate || "",
       });
-      const myReviews = await api.entities.Review.filter({ reviewee_email: u.email }, "-created_date", 10);
-      setReviews(myReviews);
+      try {
+        const myReviews = await api.entities.Review.filter({ reviewee_email: u.email }, "-created_date", 10);
+        setReviews(myReviews);
+      } catch (err) {
+        console.warn('Loading reviews failed:', err?.code || err?.message || err);
+        setReviews([]);
+      }
     }
     setLoading(false);
   };
@@ -78,8 +84,19 @@ export default function Profile() {
   };
 
   const save = async () => {
+    const newErrors = {};
+    if (form.is_tasker && !form.bio.trim()) {
+      newErrors.bio = "A description is required so clients know what you offer.";
+    }
+    if (form.is_tasker && form.skills.length === 0) {
+      newErrors.skills = "Select at least one skill so clients can find you.";
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({ bio: null, skills: null });
     setSaving(true);
-    
     const updateData = {
       bio: form.bio,
       phone: form.phone,
@@ -87,17 +104,21 @@ export default function Profile() {
       is_tasker: form.is_tasker,
       skills: form.skills,
     };
-    
-    // Only add hourly_rate if provided
     if (form.hourly_rate) {
       updateData.hourly_rate = Number(form.hourly_rate);
     }
-    
-    await api.auth.updateMe(updateData);
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-    loadData();
+    try {
+      await api.auth.updateMe(updateData);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.error('Profile save failed:', err);
+      const msg = err?.message || err?.code || 'Failed to save profile';
+      alert('Failed to save profile: ' + msg + '\nCheck Firestore rules or authentication.');
+    } finally {
+      setSaving(false);
+      loadData();
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -148,37 +169,33 @@ export default function Profile() {
     : 0;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 pb-24 md:pb-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Profile</h1>
-        <p className="text-gray-500 text-sm">Manage your account and tasker settings</p>
-      </div>
-
-      {/* User Header */}
-      <Card className="mb-4 border border-gray-100">
-        <CardContent className="p-5">
+    <div className="min-h-screen bg-gray-50 pb-24 md:pb-6">
+      {/* Profile Header */}
+      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-10">
+        <div className="max-w-2xl mx-auto px-4">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-2xl font-bold">
+            <div className="w-16 h-16 rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center text-white text-2xl font-bold shadow-lg backdrop-blur-sm">
               {(user.full_name || user.email || "?")[0].toUpperCase()}
             </div>
             <div>
-              <p className="font-bold text-gray-900 text-lg">{user.full_name || "No name set"}</p>
-              <p className="text-gray-500 text-sm">{user.email}</p>
-              {reviews.length > 0 && (
-                <div className="flex items-center gap-1.5 mt-1">
-                  <StarRating rating={Math.round(avgRating)} size="sm" />
-                  <span className="text-xs text-gray-500">{avgRating.toFixed(1)} ({reviews.length} reviews)</span>
-                </div>
-              )}
-              {form.is_tasker && (
-                <span className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full mt-1">
-                  <Briefcase className="w-3 h-3" /> Tasker
-                </span>
-              )}
+              <h1 className="text-2xl font-bold">{user.full_name || "No name set"}</h1>
+              <p className="text-green-100 text-sm">{user.email}</p>
+              <div className="flex items-center gap-2 mt-1">
+                {form.is_tasker && (
+                  <span className="inline-flex items-center gap-1 text-xs bg-white/20 text-white px-2 py-0.5 rounded-full border border-white/30">
+                    <Briefcase className="w-3 h-3" /> Tasker
+                  </span>
+                )}
+                {reviews.length > 0 && (
+                  <span className="text-xs text-green-100">{avgRating.toFixed(1)} ★ ({reviews.length} reviews)</span>
+                )}
+              </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-4 py-6">
 
       {/* Edit Form */}
       <div className="space-y-4">
@@ -190,10 +207,6 @@ export default function Profile() {
             <div>
               <Label htmlFor="phone">Phone Number</Label>
               <Input id="phone" placeholder="+251 9XX XXX XXXX" value={form.phone} onChange={(e) => set("phone", e.target.value)} className="mt-1" />
-            </div>
-            <div>
-              <Label htmlFor="bio">Bio</Label>
-              <Textarea id="bio" placeholder="Tell people about yourself..." value={form.bio} onChange={(e) => set("bio", e.target.value)} rows={3} className="mt-1" />
             </div>
             <div>
               <Label>City</Label>
@@ -216,42 +229,77 @@ export default function Profile() {
           </CardContent>
         </Card>
 
-        <Card className="border border-gray-100">
+        <Card className={`border ${errors.bio || errors.skills ? "border-red-200" : "border-gray-100"}`}>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">Tasker Settings</CardTitle>
+            <CardTitle className="text-base">Tasker Profile</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-sm">I'm available as a Tasker</p>
-                <p className="text-xs text-gray-400">Allow others to see you for tasks</p>
+                <p className="text-xs text-gray-400">Clients will be able to find and book you</p>
               </div>
-              <Switch checked={form.is_tasker} onCheckedChange={(v) => set("is_tasker", v)} />
+              <Switch checked={form.is_tasker} onCheckedChange={(v) => { set("is_tasker", v); setErrors({}); }} />
             </div>
 
             {form.is_tasker && (
               <>
-                <div>
-                  <Label>Hourly Rate (ETB)</Label>
-                  <Input type="number" placeholder="150" value={form.hourly_rate} onChange={(e) => set("hourly_rate", e.target.value)} className="mt-1" />
-                </div>
-                <div>
-                  <Label className="mb-2 block">Skills</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {taskCategories.map((c) => (
-                      <button
-                        key={c.id}
-                        type="button"
-                        onClick={() => toggleSkill(c.id)}
-                        className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                          form.skills.includes(c.id)
-                            ? "bg-green-700 text-white border-green-700"
-                            : "bg-white text-gray-600 border-gray-200 hover:border-green-300"
-                        }`}
-                      >
-                        {c.nameEn}
-                      </button>
-                    ))}
+                <div className="pt-1 border-t border-gray-100">
+                  <p className="text-xs text-gray-500 mb-3">
+                    The following is shown to clients browsing for help.
+                  </p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="bio" className="flex items-center gap-1">
+                        Description <span className="text-red-500">*</span>
+                      </Label>
+                      <Textarea
+                        id="bio"
+                        placeholder="Describe your experience, what you offer, and why clients should hire you…"
+                        value={form.bio}
+                        onChange={(e) => { set("bio", e.target.value); if (errors.bio) setErrors(p => ({ ...p, bio: null })); }}
+                        rows={4}
+                        className={`mt-1 ${errors.bio ? "border-red-400 focus-visible:ring-red-400" : ""}`}
+                      />
+                      {errors.bio && (
+                        <p className="flex items-center gap-1 text-xs text-red-600 mt-1">
+                          <AlertCircle className="w-3 h-3 flex-shrink-0" /> {errors.bio}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label className="flex items-center gap-1 mb-2">
+                        Skills <span className="text-red-500">*</span>
+                      </Label>
+                      <div className="flex flex-wrap gap-2">
+                        {taskCategories.map((c) => (
+                          <button
+                            key={c.id}
+                            type="button"
+                            onClick={() => { toggleSkill(c.id); if (errors.skills) setErrors(p => ({ ...p, skills: null })); }}
+                            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                              form.skills.includes(c.id)
+                                ? "bg-green-700 text-white border-green-700"
+                                : "bg-white text-gray-600 border-gray-200 hover:border-green-300"
+                            }`}
+                          >
+                            {c.nameEn}
+                          </button>
+                        ))}
+                      </div>
+                      {errors.skills && (
+                        <p className="flex items-center gap-1 text-xs text-red-600 mt-2">
+                          <AlertCircle className="w-3 h-3 flex-shrink-0" /> {errors.skills}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label>Hourly Rate (ETB)</Label>
+                      <Input type="number" placeholder="150" value={form.hourly_rate} onChange={(e) => set("hourly_rate", e.target.value)} className="mt-1" />
+                    </div>
                   </div>
                 </div>
               </>
@@ -269,13 +317,13 @@ export default function Profile() {
           ) : saving ? "Saving…" : "Save Changes"}
         </Button>
 
-        <Button
+        {/* <Button
           variant="outline"
           className="w-full"
           onClick={() => navigate(createPageUrl("Legal"))}
         >
           <FileText className="w-4 h-4 mr-2" /> Privacy & Terms
-        </Button>
+        </Button> */}
 
         <Button
           variant="outline"
@@ -349,6 +397,7 @@ export default function Profile() {
           </CardContent>
         </Card>
       )}
+      </div>
     </div>
   );
 }

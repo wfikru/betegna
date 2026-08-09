@@ -1,3 +1,4 @@
+import React from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -8,14 +9,16 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import Notifications from './pages/Notifications';
+import BrowseTaskers from './pages/BrowseTaskers';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { NotificationProvider } from '@/lib/NotificationContext';
 import { MessageProvider } from '@/lib/MessageContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
-const { Pages, Layout, mainPage } = pagesConfig;
-const mainPageKey = mainPage ?? Object.keys(Pages)[0];
-const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
+const { Pages, Layout } = pagesConfig;
+
+// Pages that require the user to be logged in
+const PROTECTED_PAGES = new Set(['MyBookings', 'BookTasker', 'BookingDetail', 'Messages', 'Profile']);
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
@@ -24,57 +27,27 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 const AuthenticatedApp = () => {
   const { user } = useAuth();
 
-  // Render the main app without blocking on auth check
-  // (auth state updates in background via onAuthStateChanged listener)
   return (
     <Routes>
-      {/* login route always available; if already signed in redirect to home */}
-      <Route
-        path="/login"
-        element={user ? <Navigate to="/" /> : <Login />}
-      />
+      {/* Auth routes — redirect to browse if already signed in */}
+      <Route path="/login"  element={user ? <Navigate to="/" /> : <Login />} />
+      <Route path="/Login"  element={user ? <Navigate to="/" /> : <Login />} />
+      <Route path="/signup" element={user ? <Navigate to="/" /> : <Signup />} />
+      <Route path="/Signup" element={user ? <Navigate to="/" /> : <Signup />} />
+      <Route path="/forgot-password" element={user ? <Navigate to="/" /> : <ForgotPassword />} />
+      <Route path="/ForgotPassword"  element={user ? <Navigate to="/" /> : <ForgotPassword />} />
 
-      {/* Login route with capital L (for dynamic routing) */}
-      <Route
-        path="/Login"
-        element={user ? <Navigate to="/" /> : <Login />}
-      />
-
-      {/* signup route always available; if already signed in redirect to home */}
-      <Route
-        path="/signup"
-        element={user ? <Navigate to="/" /> : <Signup />}
-      />
-
-      {/* Signup route with capital S (for dynamic routing) */}
-      <Route
-        path="/Signup"
-        element={user ? <Navigate to="/" /> : <Signup />}
-      />
-
-      {/* forgot password route always available; if already signed in redirect to home */}
-      <Route
-        path="/forgot-password"
-        element={user ? <Navigate to="/" /> : <ForgotPassword />}
-      />
-
-      {/* ForgotPassword route with capital letters (for dynamic routing) */}
-      <Route
-        path="/ForgotPassword"
-        element={user ? <Navigate to="/" /> : <ForgotPassword />}
-      />
-
-      {/* public home page - always accessible */}
+      {/* Root → render configured main page (Home by default) */}
       <Route
         path="/"
-        element={user ? <Navigate to="/BrowseTasks" /> : (
-          <LayoutWrapper currentPageName={mainPageKey}>
-            <MainPage />
+        element={
+          <LayoutWrapper currentPageName={pagesConfig.mainPage}>
+            {React.createElement(pagesConfig.Pages[pagesConfig.mainPage])}
           </LayoutWrapper>
-        )}
+        }
       />
 
-      {/* notifications route - protected */}
+      {/* Notifications — protected */}
       <Route
         path="/notifications"
         element={user ? (
@@ -86,17 +59,21 @@ const AuthenticatedApp = () => {
         )}
       />
 
-      {/* dynamically register remaining pages; no auth redirects */}
+      {/* All other pages — protected ones redirect to login if not signed in */}
       {Object.entries(Pages)
-        .filter(([path]) => path !== 'Login' && path !== 'Signup' && path !== 'ForgotPassword')
+        .filter(([path]) => !['Login', 'Signup', 'ForgotPassword'].includes(path))
         .map(([path, Page]) => (
           <Route
             key={path}
             path={`/${path}`}
             element={
-              <LayoutWrapper currentPageName={path}>
-                <Page />
-              </LayoutWrapper>
+              PROTECTED_PAGES.has(path) && !user ? (
+                <Navigate to="/login" />
+              ) : (
+                <LayoutWrapper currentPageName={path}>
+                  <Page />
+                </LayoutWrapper>
+              )
             }
           />
         ))}

@@ -11,7 +11,7 @@ export default function Login() {
 
   const redirectAfterLogin = useMemo(() => {
     const params = new URLSearchParams(location.search);
-    return params.get("redirect") || "/BrowseTasks";
+    return params.get("redirect") || "/";
   }, [location.search]);
 
   useEffect(() => {
@@ -31,6 +31,6 @@ export default function Login() {
   }
 
   return (
-    <LoginModal onCancel={() => navigate(-1)} />
+    <LoginModal onCancel={() => navigate(redirectAfterLogin)} />
   );
 }

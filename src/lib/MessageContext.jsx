@@ -36,9 +36,22 @@ export const MessageProvider = ({ children }) => {
       limit(1000)  // Limit to 1000 unread messages (practical maximum)
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setUnreadMessageCount(snapshot.size);
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        setUnreadMessageCount(snapshot.size);
+      },
+      (err) => {
+        // Log detailed Firestore errors (permission/network) and fallback
+        console.error('Message snapshot listener error:', err);
+        // If permission denied, hint to developer in console
+        if (err?.code === 'permission-denied') {
+          console.warn('Firestore permission-denied on messages listener. Check Firestore rules and authentication.');
+        }
+        // Reset count to avoid stale UI
+        setUnreadMessageCount(0);
+      }
+    );
 
     return () => unsubscribe();
   }, [user?.email, isPageVisible]);

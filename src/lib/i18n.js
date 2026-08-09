@@ -4,7 +4,7 @@ import enTranslations from '../locales/en.json';
 import amTranslations from '../locales/am.json';
 
 // Get saved language or default to English
-const savedLanguage = localStorage.getItem('betegna-language') || 'en';
+const savedLanguage = typeof window !== 'undefined' ? (localStorage.getItem('betegna-language') || 'en') : 'en';
 
 i18n
   .use(initReactI18next)
@@ -21,6 +21,9 @@ i18n
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false // React already escapes
+    },
+    react: {
+      useSuspense: false
     }
   });
 

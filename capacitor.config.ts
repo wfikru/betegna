@@ -11,6 +11,11 @@ const config: CapacitorConfig = {
   plugins: {
     StatusBar: {
       overlaysWebView: false
+    },
+    Keyboard: {
+      resize: 'body',
+      style: 'dark',
+      resizeOnFullScreen: true
     }
   }
 };

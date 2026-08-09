@@ -41,7 +41,35 @@ export default function LoginModal({ onCancel, hideOverlay = false }) {
     }
   }, [user, location.pathname, redirectAfterLogin, navigate]);
 
-  const handleCancel = onCancel ? onCancel : () => navigate("/");
+  const handleCancel = () => {
+    try {
+      if (typeof onCancel === "function") {
+        onCancel();
+        return;
+      }
+    } catch (err) {
+      console.warn("onCancel callback threw:", err);
+    }
+
+    // Fallback to navigating back if possible, otherwise go home
+    try {
+      if (window.history && window.history.length > 1) {
+        navigate(-1);
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      navigate("/");
+    }
+  };
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") handleCancel();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [handleCancel]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

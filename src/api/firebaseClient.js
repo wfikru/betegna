@@ -181,6 +181,18 @@ const entities = {
     create: (data) => addDoc(collection(db, "reports"), { ...data, created_date: new Date().toISOString() }),
     update: (id, data) => updateDoc(doc(db, "reports", id), data),
   },
+  Booking: {
+    filter: (conds, sort, lim) => buildFilter("bookings", conds, sort, lim),
+    create: (data) => addDoc(collection(db, "bookings"), { ...data, created_date: new Date().toISOString() }),
+    update: (id, data) => updateDoc(doc(db, "bookings", id), data),
+  },
+  User: {
+    filter: (conds, sort, lim) => buildFilter("users", conds, sort, lim),
+    get: async (uid) => {
+      const snap = await getDoc(doc(db, "users", uid));
+      return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+    },
+  },
 };
 
 const authWrapper = {

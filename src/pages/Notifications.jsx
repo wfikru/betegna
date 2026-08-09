@@ -15,25 +15,41 @@ export default function Notifications() {
   const getNotificationIcon = (type) => {
     switch (type) {
       case "offer_made":
-        return <Bell className="w-4 h-4 text-blue-600" />;
+        return (
+          <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <Bell className="w-4 h-4 text-blue-600" />
+          </div>
+        );
       case "offer_accepted":
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
+        return (
+          <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+            <CheckCircle className="w-4 h-4 text-green-600" />
+          </div>
+        );
       case "offer_rejected":
-        return <AlertCircle className="w-4 h-4 text-red-600" />;
+        return (
+          <div className="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+            <AlertCircle className="w-4 h-4 text-red-600" />
+          </div>
+        );
       default:
-        return <Bell className="w-4 h-4 text-gray-600" />;
+        return (
+          <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+            <Bell className="w-4 h-4 text-gray-500" />
+          </div>
+        );
     }
   };
 
   const getNotificationColor = (type, read) => {
-    if (read) return "bg-gray-50";
+    if (read) return "";
     switch (type) {
       case "offer_made":
-        return "bg-blue-50";
+        return "bg-blue-50 border-blue-100";
       case "offer_accepted":
-        return "bg-green-50";
+        return "bg-green-50 border-green-100";
       case "offer_rejected":
-        return "bg-red-50";
+        return "bg-red-50 border-red-100";
       default:
         return "bg-gray-50";
     }
@@ -62,11 +78,16 @@ export default function Notifications() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 pb-24 md:pb-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Notifications</h1>
-        <p className="text-gray-500 text-sm">Stay updated on your tasks and offers</p>
+    <div className="min-h-screen bg-gray-50 pb-24 md:pb-6">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-10">
+        <div className="max-w-2xl mx-auto px-4">
+          <h1 className="text-3xl font-bold mb-1">Notifications</h1>
+          <p className="text-green-100 text-base">Stay updated on your tasks and offers</p>
+        </div>
       </div>
+
+    <div className="max-w-2xl mx-auto px-4 py-6">
 
       {notifications.length > 0 && (
         <div className="flex justify-end mb-4">
@@ -99,8 +120,8 @@ export default function Notifications() {
               onClick={() => handleNotificationClick(notification)}
             >
               <CardContent className="p-4">
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 pt-1">
+                <div className="flex gap-3 items-start">
+                  <div className="pt-0.5">
                     {getNotificationIcon(notification.type)}
                   </div>
 
@@ -139,6 +160,7 @@ export default function Notifications() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

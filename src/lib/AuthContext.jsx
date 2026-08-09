@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { auth, api } from '@/api/firebaseClient';
+import { auth, api, db } from '@/api/firebaseClient';
 import {
   onAuthStateChanged,
   getRedirectResult,
@@ -9,6 +9,7 @@ import {
   browserSessionPersistence,
   inMemoryPersistence,
 } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -58,6 +59,16 @@ export const AuthProvider = ({ children }) => {
       setUser(u);
       setIsAuthenticated(!!u);
       setIsLoadingAuth(false);
+      // Ensure email + display name are always persisted to Firestore
+      // (critical for Google OAuth users whose doc may only be partially created)
+      if (u?.email) {
+        setDoc(doc(db, "users", u.uid), {
+          email: u.email,
+          full_name: u.displayName || null,
+        }, { merge: true }).catch((err) => {
+          console.warn('Persisting user profile to Firestore failed:', err?.code || err?.message || err);
+        });
+      }
     });
     return unsub;
   }, []);
