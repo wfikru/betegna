@@ -21,11 +21,11 @@ export default function TaskCard({ task, showFavoriteButton = true, onFavoriteCh
   const canShowFavoriteButton = showFavoriteButton && user && task.created_by !== user.email;
   
   const statusConfig = {
-    open: { cls: "bg-green-100 text-green-700" },
-    assigned: { cls: "bg-blue-100 text-blue-700" },
-    in_progress: { cls: "bg-yellow-100 text-yellow-700" },
-    completed: { cls: "bg-gray-100 text-gray-600" },
-    cancelled: { cls: "bg-red-100 text-red-500" },
+    open: { cls: "bg-green-100 text-green-800" },
+    assigned: { cls: "bg-emerald-50 text-emerald-800 border border-emerald-200" },
+    in_progress: { cls: "bg-amber-100 text-amber-800" },
+    completed: { cls: "bg-emerald-100 text-emerald-800" },
+    cancelled: { cls: "bg-red-100 text-red-700" },
   };
   const s = statusConfig[task.status] || statusConfig.open;
 

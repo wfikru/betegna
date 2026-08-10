@@ -8,10 +8,10 @@ import { format } from "date-fns";
 import { Calendar, MapPin, ChevronRight, Briefcase, Search, Plus } from "lucide-react";
 
 const STATUS_CONFIG = {
-  pending_review: { label: "Pending Review", cls: "bg-yellow-100 text-yellow-800", dot: "bg-yellow-400" },
-  accepted:       { label: "Accepted",        cls: "bg-blue-100 text-blue-800",   dot: "bg-blue-400" },
-  in_progress:    { label: "In Progress",     cls: "bg-orange-100 text-orange-800", dot: "bg-orange-400" },
-  completed:      { label: "Completed",       cls: "bg-green-100 text-green-700", dot: "bg-green-500" },
+  pending_review: { label: "Pending Review", cls: "bg-amber-100 text-amber-800", dot: "bg-amber-400" },
+  accepted:       { label: "Accepted",        cls: "bg-emerald-50 text-emerald-800 border border-emerald-200", dot: "bg-emerald-500" },
+  in_progress:    { label: "In Progress",     cls: "bg-amber-50 text-amber-800 border border-amber-200", dot: "bg-amber-500" },
+  completed:      { label: "Completed",       cls: "bg-green-100 text-green-800", dot: "bg-green-600" },
   declined:       { label: "Declined",        cls: "bg-red-100 text-red-700",     dot: "bg-red-400" },
   cancelled:      { label: "Cancelled",       cls: "bg-gray-100 text-gray-500",   dot: "bg-gray-300" },
 };

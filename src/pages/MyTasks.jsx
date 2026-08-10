@@ -14,17 +14,17 @@ import { format } from "date-fns";
 import LoginModal from "@/components/LoginModal";
 
 const statusLabel = {
-  open: { text: "Open", cls: "bg-green-100 text-green-700" },
-  assigned: { text: "Assigned", cls: "bg-blue-100 text-blue-700" },
-  in_progress: { text: "In Progress", cls: "bg-yellow-100 text-yellow-700" },
-  completed: { text: "Completed", cls: "bg-gray-100 text-gray-600" },
-  cancelled: { text: "Cancelled", cls: "bg-red-100 text-red-500" },
+  open: { text: "Open", cls: "bg-green-100 text-green-800" },
+  assigned: { text: "Assigned", cls: "bg-emerald-50 text-emerald-800 border border-emerald-200" },
+  in_progress: { text: "In Progress", cls: "bg-amber-100 text-amber-800" },
+  completed: { text: "Completed", cls: "bg-emerald-100 text-emerald-800" },
+  cancelled: { text: "Cancelled", cls: "bg-red-100 text-red-700" },
 };
 
 const offerStatusLabel = {
-  pending: { text: "Pending", cls: "bg-yellow-100 text-yellow-700" },
-  accepted: { text: "Accepted", cls: "bg-green-100 text-green-700" },
-  rejected: { text: "Rejected", cls: "bg-red-100 text-red-500" },
+  pending: { text: "Pending", cls: "bg-amber-100 text-amber-800" },
+  accepted: { text: "Accepted", cls: "bg-green-100 text-green-800" },
+  rejected: { text: "Rejected", cls: "bg-red-100 text-red-700" },
   withdrawn: { text: "Withdrawn", cls: "bg-gray-100 text-gray-500" },
 };
 

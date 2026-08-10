@@ -19,11 +19,11 @@ import StarRating from "@/components/shared/StarRating";
 import { format } from "date-fns";
 
 const statusConfig = {
-  open: { text: "Open", cls: "bg-green-100 text-green-700" },
-  assigned: { text: "Assigned", cls: "bg-blue-100 text-blue-700" },
-  in_progress: { text: "In Progress", cls: "bg-yellow-100 text-yellow-700" },
-  completed: { text: "Completed", cls: "bg-gray-100 text-gray-600" },
-  cancelled: { text: "Cancelled", cls: "bg-red-100 text-red-500" },
+  open: { text: "Open", cls: "bg-green-100 text-green-800" },
+  assigned: { text: "Assigned", cls: "bg-emerald-50 text-emerald-800 border border-emerald-200" },
+  in_progress: { text: "In Progress", cls: "bg-amber-100 text-amber-800" },
+  completed: { text: "Completed", cls: "bg-emerald-100 text-emerald-800" },
+  cancelled: { text: "Cancelled", cls: "bg-red-100 text-red-700" },
 };
 
 export default function TaskDetail() {
@@ -452,7 +452,7 @@ export default function TaskDetail() {
                       size="sm"
                       variant="outline"
                       onClick={startEditReview}
-                      className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                      className="text-green-700 border-green-200 hover:bg-green-50"
                     >
                       <Edit className="w-3 h-3 mr-1" /> Edit
                     </Button>

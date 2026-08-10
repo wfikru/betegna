@@ -57,7 +57,40 @@ When a user visits [TaskRabbit](https://www.taskrabbit.com/), their trust is bui
 
 ---
 
-## 3. Functionality Review & Flow Recommendations
+## 3. Entire App Design System & Page-by-Page Color Audit
+
+To ensure **Betegna** maintains a cohesive, professional **TaskRabbit-style Look and Feel** across every single route and flow, we audited all 17 pages and 6 shared components and standardized the design tokens:
+
+### A. Cohesive Design Token Rules Applied Across the App
+- **Primary Brand Theme:** `bg-green-700` (`#047857`) and `bg-green-800` for primary CTA buttons, active tabs, header highlights, and focus borders.
+- **Secondary Accent:** `bg-emerald-50` (`#ecfdf5`) and `border-emerald-200` for active unread highlights and notification cards.
+- **Header Gradient System:** Every major section header uses a consistent `bg-gradient-to-r from-green-700 to-green-600 text-white` banner with `py-10` or `py-12`.
+- **Card Containers:** `bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition-all duration-200` applied to all task cards, tasker listings, bookings, and profile boxes.
+
+### B. Page-by-Page Styling & Flow Audit Table
+
+| Page / Route | Header Style | Card & Container Style | Button & Badge Status Tokens | Audit Status & Action Taken |
+| :--- | :--- | :--- | :--- | :--- |
+| **`Home.jsx`** (`/`) | Custom Dark-Green Hero with photo overlay | `rounded-2xl border border-gray-200/80 hover:shadow-xl` | Primary CTA `bg-green-700 hover:bg-green-800`; Price anchor badges `From 350 ETB/hr` | **Upgraded:** Replaced broken imagery & added TaskRabbit trust badges. |
+| **`BrowseTaskers.jsx`** (`/BrowseTaskers`) | `bg-gradient-to-r from-green-700 to-green-600` | White cards with image banner | Primary CTA `bg-green-700`; Verified badge `bg-green-700/90 text-white` | **Upgraded:** Clean fallback avatars & verified shields. |
+| **`TaskerProfile.jsx`** (`/TaskerProfile`) | `bg-gradient-to-r from-green-700 to-green-600` | White box cards for bio & skills | Primary CTA `bg-green-700`; Edit CTA `border-green-700 text-green-700` | **Verified & Aligned.** |
+| **`BookTasker.jsx`** (`/BookTasker`) | `bg-gradient-to-r from-green-700 to-green-600` | White form container `rounded-2xl` | Active service selector `bg-green-700 text-white`; Submit `bg-green-700` | **Verified & Aligned.** |
+| **`MyBookings.jsx`** (`/MyBookings`) | `bg-gradient-to-r from-green-700 to-green-600` | Tab switcher `bg-green-700 text-white` | Aligned `accepted` status to `bg-emerald-50 text-emerald-800 border-emerald-200` | **Standardized Colors:** Fixed inconsistent badge colors. |
+| **`BookingDetail.jsx`** (`/BookingDetail`) | `bg-gradient-to-r from-green-700 to-green-600` | Timeline `rounded-2xl` | Timeline active `ring-4 ring-green-100 bg-green-700`; Action buttons aligned | **Verified & Aligned.** |
+| **`BrowseTasks.jsx`** (`/BrowseTasks`) | `bg-gradient-to-r from-green-700 to-green-600` | Category filter buttons `rounded-2xl` | Header CTA `bg-white text-green-700`; Card hover border `hover:border-green-300` | **Verified & Aligned.** |
+| **`PostTask.jsx`** (`/PostTask`) | `bg-gradient-to-r from-green-700 to-green-600` | Form cards `rounded-2xl border-gray-100` | Primary submit button `bg-green-700 hover:bg-green-800 text-white` | **Verified & Aligned.** |
+| **`MyTasks.jsx`** (`/MyTasks`) | `bg-gradient-to-r from-green-700 to-green-600` | Task cards `hover:border-green-300` | Aligned `assigned` & `completed` badges to emerald green theme | **Standardized Colors:** Replaced blue/gray tags. |
+| **`TaskDetail.jsx`** (`/TaskDetail`) | `bg-gradient-to-r from-green-700 to-green-600` | Offer cards `rounded-2xl` | Replaced off-brand `text-blue-600` Edit button with `text-green-700` | **Standardized Colors.** |
+| **`Notifications.jsx`** (`/notifications`) | `bg-gradient-to-r from-green-700 to-green-600` | Interactive notification cards | Replaced `bg-blue-100` icons and `bg-blue-600` badge with `bg-emerald-100 text-emerald-700` and `bg-green-700` | **Standardized Colors:** Replaced blue unread tokens. |
+| **`Profile.jsx`** (`/Profile`) | `bg-gradient-to-r from-green-700 to-green-600` | Form sections `rounded-2xl` | Active skills `bg-green-700 text-white`; Save button `bg-green-700` | **Verified & Aligned.** |
+| **`Messages.jsx`** (`/Messages`) | `bg-gradient-to-r from-green-700 to-green-600` | Chat window & conversation list | Sent bubbles `bg-green-700 text-white`; Unread indicators `bg-green-700` | **Verified & Aligned.** |
+| **`Login.jsx` & `Signup.jsx`** | Glassmorphism modal background | Card `rounded-2xl bg-white shadow-xl` | Icon badge `bg-green-700 text-white`; Primary CTA `bg-green-700 hover:bg-green-800` | **Verified & Aligned.** |
+| **`CategoryBadge.jsx` (Shared)** | N/A (Pills) | Pill `rounded-full text-xs font-medium` | Replaced random rainbow neons with cohesive earth & emerald tones | **Standardized Colors:** Professional TaskRabbit tone. |
+| **`TaskCard.jsx` (Shared)** | N/A (Card) | `rounded-2xl border-gray-200` | Aligned status tag colors to emerald/amber/red system | **Standardized Colors.** |
+
+---
+
+## 4. Functionality Review & Flow Recommendations
 
 ### A. Unifying the Dual-Marketplace User Flows
 TaskRabbit allows users to book in two ways. We have now connected both in your app:
@@ -103,7 +136,7 @@ TaskRabbit allows users to book in two ways. We have now connected both in your 
 
 ---
 
-## 4. Capacitor & Mobile-Native Architecture Review
+## 5. Capacitor & Mobile-Native Architecture Review
 
 Since this app is built for mobile deployment via **Ionic Capacitor** (`@capacitor/core`, `@capacitor/ios`, `@capacitor/android`), we evaluated the mobile-specific UX:
 
@@ -137,7 +170,7 @@ Since this app is built for mobile deployment via **Ionic Capacitor** (`@capacit
 
 ---
 
-## 5. Summary of Modified Files in Workspace
+## 6. Summary of Modified Files in Workspace
 
 | File Path | Description of Changes |
 | :--- | :--- |
@@ -152,7 +185,7 @@ Since this app is built for mobile deployment via **Ionic Capacitor** (`@capacit
 
 ---
 
-## 6. Next Steps & Recommended Roadmap
+## 7. Next Steps & Recommended Roadmap
 
 1. **Test the Live Preview:**  
    Open the dev server preview (`http://localhost:5173/`) to experience the upgraded Home page, transparent pricing badges, verified tasker cards, and seamless navigation between Direct Hire and Open Task Posting.
