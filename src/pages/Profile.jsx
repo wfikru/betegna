@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "@/api/firebaseClient";
 import { useAuth } from "@/lib/AuthContext";
+import { useAppMode } from "@/lib/AppModeContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ import { createPageUrl } from "@/utils";
 export default function Profile() {
   const navigate = useNavigate();
   const { user: authUser, isLoadingAuth } = useAuth();
+  const { isTaskerMode, toggleMode } = useAppMode();
   const [user, setUser] = useState(null);
   /** @type {[import("../types/entities").Review[], Function]} */
   const [reviews, setReviews] = useState([]);
@@ -196,6 +198,43 @@ export default function Profile() {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6">
+
+        {/* Global Mode Switcher Card (Airbnb / Uber Style) */}
+        <Card className="border border-slate-200 dark:border-slate-800 shadow-md bg-white dark:bg-slate-900 mb-6">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white shadow-sm ${
+                  isTaskerMode ? "bg-indigo-700" : "bg-emerald-600"
+                }`}>
+                  {isTaskerMode ? "💼" : "👤"}
+                </div>
+                <div>
+                  <p className="font-extrabold text-slate-900 dark:text-white text-base">
+                    {isTaskerMode ? "Worker Business Dashboard" : "Client Service Marketplace"}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {isTaskerMode
+                      ? "Currently viewing schedule, earnings, and lead requests"
+                      : "Currently viewing services to hire and book local Taskers"}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => toggleMode(isTaskerMode ? 'client' : 'tasker')}
+                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm shrink-0 ${
+                  isTaskerMode
+                    ? "bg-white dark:bg-slate-800 text-indigo-900 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700 hover:bg-slate-100"
+                    : "bg-indigo-700 hover:bg-indigo-800 text-white"
+                }`}
+              >
+                {isTaskerMode ? "Switch to Client Mode" : "Switch to Tasker Mode"}
+              </button>
+            </div>
+          </CardContent>
+        </Card>
 
       {/* Edit Form */}
       <div className="space-y-4">
