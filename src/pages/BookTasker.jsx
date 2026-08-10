@@ -4,7 +4,7 @@ import { api } from "@/api/firebaseClient";
 import { createPageUrl, getFallbackTaskerPhoto } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
 import { taskCategories } from "@/components/shared/CategoryBadge";
-import { MapPin, ChevronLeft, CheckCircle, Calendar, Clock, DollarSign, FileText } from "lucide-react";
+import { MapPin, ChevronLeft, CheckCircle, Calendar, Clock, DollarSign, FileText, ShieldCheck } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const CITIES = [
@@ -357,24 +357,40 @@ export default function BookTasker() {
             </div>
           </div>
 
-          {/* Price Summary */}
-          {totalPrice !== null && (
-            <div className="bg-green-50 rounded-2xl border border-green-100 p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <DollarSign className="w-4 h-4 text-green-700" />
-                <h2 className="font-bold text-green-900">Price Estimate</h2>
+          {/* Price & Escrow Pre-Authorization Summary (TaskRabbit / Thumbtack Style) */}
+          <div className="bg-emerald-50 dark:bg-emerald-950/60 rounded-2xl border border-emerald-200 dark:border-emerald-800 p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
+                <h2 className="font-extrabold text-slate-900 dark:text-white text-base">Escrow Price Protection</h2>
               </div>
-              <div className="space-y-1.5 text-sm">
-                <div className="flex justify-between text-gray-600">
-                  <span>{tasker.hourly_rate} ETB/hr × {form.estimated_hours}h</span>
-                  <span className="font-semibold text-gray-900">{totalPrice} ETB</span>
-                </div>
-              </div>
-              <p className="text-xs text-green-700 mt-3">
-                * Final price is agreed upon with the Tasker before work begins.
-              </p>
+              <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-300">
+                Fixed Rate
+              </span>
             </div>
-          )}
+            <div className="space-y-2 text-sm border-t border-emerald-200/60 dark:border-emerald-800/60 pt-3">
+              <div className="flex justify-between text-slate-600 dark:text-slate-300">
+                <span>Tasker Hourly Rate</span>
+                <span className="font-bold text-slate-900 dark:text-white">{tasker.hourly_rate || 400} ETB/hr</span>
+              </div>
+              <div className="flex justify-between text-slate-600 dark:text-slate-300">
+                <span>Estimated Duration</span>
+                <span className="font-bold text-slate-900 dark:text-white">{form.estimated_hours} hrs</span>
+              </div>
+              <div className="flex justify-between text-base font-black text-slate-900 dark:text-white pt-2 border-t border-emerald-200/40">
+                <span>Estimated Total (Held in Escrow)</span>
+                <span className="text-emerald-700 dark:text-emerald-400">
+                  {totalPrice || ((tasker.hourly_rate || 400) * form.estimated_hours)} ETB
+                </span>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 mt-3 p-3 rounded-xl bg-white/70 dark:bg-slate-900/60 text-xs text-slate-600 dark:text-slate-300">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <span>
+                <strong>100% Escrow Protection:</strong> Your card is pre-authorized for the estimate. You are only charged after the task is completed and you sign off.
+              </span>
+            </div>
+          </div>
 
           <button
             type="submit"

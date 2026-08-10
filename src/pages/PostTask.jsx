@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Calendar, DollarSign, Tag, CheckCircle } from "lucide-react";
+import { MapPin, Calendar, DollarSign, Tag, CheckCircle, ShieldCheck } from "lucide-react";
 import { taskCategories } from "@/components/shared/CategoryBadge";
 import LoginModal from "@/components/LoginModal";
 
@@ -82,16 +82,36 @@ export default function PostTask() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-10">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-24 md:pb-8">
+      {/* Thumbtack-Inspired Pro Match Header */}
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white py-10">
         <div className="max-w-2xl mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-1">Post a Task</h1>
-          <p className="text-green-100 text-base">Describe what you need done and find a skilled tasker</p>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold uppercase tracking-wider mb-2">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            Thumbtack Pro Match System
+          </span>
+          <h1 className="text-3xl font-black mb-1">Request 3 Free Quotes</h1>
+          <p className="text-slate-200 text-base">
+            Tell us about your home project. We'll match you with verified local Pros who will send competitive bids.
+          </p>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 -mt-4">
+      <div className="max-w-2xl mx-auto px-4 -mt-6">
+        {/* Thumbtack Pro Match Advantage Pill Card */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-md mb-6 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-extrabold shrink-0">
+              ⚡
+            </div>
+            <div>
+              <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">How Quote Matching Works</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                100% Free to post • Receive quotes in under 1 hour • Compare reviews before hiring
+              </p>
+            </div>
+          </div>
+        </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <Card>

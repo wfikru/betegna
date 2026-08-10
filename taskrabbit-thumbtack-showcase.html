@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Betegna (ቤተኛ) — TaskRabbit + Thumbtack Redesign Showcase</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --emerald-500: #10b981;
+      --emerald-600: #059669;
+      --emerald-400: #34d399;
+      --teal-400: #2dd4bf;
+      --indigo-900: #312e81;
+      --amber-500: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald-400);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    h1 {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 10px;
+    }
+
+    h1 span {
+      color: var(--emerald-400);
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-top: 50px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-main);
+      border-left: 4px solid var(--emerald-500);
+      padding-left: 12px;
+    }
+
+    /* Grid Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    /* Dual Mode Box */
+    .mode-box {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    .mode-btn.active-client {
+      background: var(--emerald-600);
+      color: #ffffff;
+      border-color: var(--emerald-400);
+    }
+
+    .mode-btn.active-tasker {
+      background: var(--indigo-900);
+      color: var(--teal-400);
+      border-color: var(--teal-400);
+    }
+
+    /* Price Anchor Pill */
+    .price-pill {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--emerald-400);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* Quote vs Instant Box */
+    .booking-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .split-btn {
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .instant-btn {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--emerald-400);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .quote-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid var(--card-border);
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+
+    th, td {
+      padding: 16px 20px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 14px;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--emerald-400);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="badge">✦ TaskRabbit + Thumbtack Hybrid Redesign ✦</div>
+      <h1>Betegna (<span>ቤተኛ</span>) UI/UX Showcase</h1>
+      <p class="subtitle">Complete visual redesign uniting TaskRabbit's Upfront Hourly Booking with Thumbtack's 3-Quote Project Match in an All-in-One Dual-Mode Shell.</p>
+    </header>
+
+    <!-- SECTION 1: THE DUAL BOOKING MODEL -->
+    <h2 class="section-title">1. The Dual Booking Model: Instant Book vs. Request 3 Quotes</h2>
+    <div class="grid">
+      <!-- House Cleaning Card -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 24px;">✨</span>
+          <span class="price-pill">From 350 ETB/hr</span>
+        </div>
+        <div class="card-title">House Cleaning</div>
+        <div class="card-desc">Verified local pros for regular home cleaning, deep cleaning, and move-in/out services.</div>
+        <div class="booking-split">
+          <div class="split-btn instant-btn">⚡ Instant Book</div>
+          <div class="split-btn quote-btn">📋 Get 3 Quotes</div>
+        </div>
+      </div>
+
+      <!-- Plumbing & Electrical Card -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 24px;">🔧</span>
+          <span class="price-pill">From 500 ETB/hr</span>
+        </div>
+        <div class="card-title">Plumbing & Electrical</div>
+        <div class="card-desc">Expert repairs for pipe leaks, wiring, generator installation, and equipment maintenance.</div>
+        <div class="booking-split">
+          <div class="split-btn instant-btn">⚡ Instant Book</div>
+          <div class="split-btn quote-btn">📋 Get 3 Quotes</div>
+        </div>
+      </div>
+
+      <!-- Event Setup Card -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 24px;">🎉</span>
+          <span class="price-pill">From 600 ETB/hr</span>
+        </div>
+        <div class="card-title">Event Setup & Catering</div>
+        <div class="card-desc">Skilled assistance for family celebrations, Timket, Meskel, weddings, and sound setup.</div>
+        <div class="booking-split">
+          <div class="split-btn instant-btn">⚡ Instant Book</div>
+          <div class="split-btn quote-btn">📋 Get 3 Quotes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: DUAL MODE INTEGRATED SHELL -->
+    <h2 class="section-title">2. Dual-Mode Integrated Shell & Toggle Architecture</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title" style="color: var(--emerald-400);">Client Marketplace Mode</div>
+        <div class="card-desc">
+          High-contrast slate-50 background, emerald green CTA accents, and a Thumbtack-inspired search bar: "What's on your home to-do list?"
+        </div>
+        <div class="mode-box">
+          <div class="mode-btn active-client">👤 Client Mode</div>
+          <div class="mode-btn">💼 Tasker Pro</div>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          Bottom Bar: Explore • Tasks • [+ Post] • Bookings • Inbox
+        </div>
+      </div>
+
+      <div class="card" style="border-color: #312e81;">
+        <div class="card-title" style="color: var(--teal-400);">Tasker Pro Business Dashboard</div>
+        <div class="card-desc">
+          Indigo-950 header banner ("ACTIVE WORKER MODE"), KPI Earnings cards, Today's Job Schedule, and Thumbtack Pro Lead Match Feed.
+        </div>
+        <div class="mode-box">
+          <div class="mode-btn">👤 Client Mode</div>
+          <div class="mode-btn active-tasker">💼 Tasker Pro</div>
+        </div>
+        <div style="font-size: 12px; color: var(--teal-400);">
+          Bottom Bar: Pro Dashboard • Lead Feed • [$ Earned] • Calendar • Settings
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: FEATURE MATRIX -->
+    <h2 class="section-title">3. Complete Marketplace Redesign Feature Matrix</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Page / Component</th>
+          <th>Previous Architecture</th>
+          <th>Redesigned TaskRabbit + Thumbtack Architecture</th>
+          <th>Conversion Benefit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Home.jsx</strong> (Client Mode)</td>
+          <td>Basic green hero with single search bar</td>
+          <td><strong>Thumbtack Hero ("What's on your home to-do list?")</strong> with frosted search + 6 category chips; <strong>Project Cost Estimator Cards</strong> with upfront hourly rates and dual CTA pills; <strong>Featured Elite Taskers</strong> vertical cards.</td>
+          <td>Builds immediate consumer trust with transparent pricing and effortless category navigation.</td>
+        </tr>
+        <tr>
+          <td><strong>Home.jsx</strong> (Tasker Mode)</td>
+          <td>N/A (Identical to client home)</td>
+          <td><strong>Worker Business Dashboard</strong> with Indigo/Teal working mode header; 3 Financial KPI Cards; Today's Job Schedule with immediate <code>"En Route"</code> dispatch trigger; <strong>Thumbtack-Style Lead Match Feed</strong>.</td>
+          <td>Empowers workers to manage daily schedule and bid on open client requests.</td>
+        </tr>
+        <tr>
+          <td><strong>BookTasker.jsx</strong></td>
+          <td>Standard single-page form</td>
+          <td><strong>TaskRabbit 4-Step Interactive Task Scoping Wizard</strong> with dynamic price calculation, time-window selection, and <strong>Escrow Price Protection Summary</strong>.</td>
+          <td>Eliminates pricing ambiguity and protects both client and worker via Stripe pre-authorization hold.</td>
+        </tr>
+        <tr>
+          <td><strong>PostTask.jsx</strong></td>
+          <td>Basic task submission form</td>
+          <td><strong>Thumbtack Pro Match Project Wizard</strong> (<code>"Request 3 Free Quotes"</code>); Advantage banner explaining competitive quotes (free to post, receive bids in &lt;1 hr).</td>
+          <td>Ideal for large/custom jobs where quotes beat fixed hourly rates.</td>
+        </tr>
+        <tr>
+          <td><strong>BrowseTasks.jsx</strong></td>
+          <td>Standard open task list</td>
+          <td><strong>Thumbtack Pro Lead Match Feed</strong> in Tasker Mode (displays client project budget, date needed, neighborhood, and instant quote submission button).</td>
+          <td>Serves as the primary lead acquisition channel for Pro workers.</td>
+        </tr>
+        <tr>
+          <td><strong>BookingDetail.jsx</strong></td>
+          <td>Static timeline list</td>
+          <td><strong>Integrated Split-Screen Live Tracking Route Map (<code>&lt;LiveTrackingMap /&gt;</code>)</strong> when status hits <code>en_route</code> or <code>in_progress</code>; real-time ETA badge; masked Twilio VoIP calling button.</td>
+          <td>Delivers an Uber-class live dispatch and tracking experience.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>

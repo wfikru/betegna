@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Search, ChevronDown, PlusCircle, ArrowRight, CheckCircle, MessageCircle, Star } from "lucide-react";
+import { MapPin, Search, ChevronDown, PlusCircle, ArrowRight, CheckCircle, MessageCircle, Star, ShieldCheck, Zap } from "lucide-react";
 import { taskCategories } from "@/components/shared/CategoryBadge";
 import TaskCard from "@/components/shared/TaskCard";
 import { useAuth } from "@/lib/AuthContext";
+import { useAppMode } from "@/lib/AppModeContext";
 
 const TASKS_PER_PAGE = 20;
 
@@ -131,6 +132,7 @@ export default function BrowseTasks() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isTaskerMode } = useAppMode();
   /** @type {[import("../types/entities").Task[], Function]} */
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -187,33 +189,53 @@ export default function BrowseTasks() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-12">
-        <div className="max-w-6xl mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">{t('browseTasks.title')}</h1>
-          <p className="text-green-50 text-lg">{t('browseTasks.subtitle')}</p>
-          {/* Guest CTA — shown only to non-logged-in users */}
-          {!user && (
-            <div className="mt-6 flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={() => navigate(createPageUrl("PostTask"))}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white text-green-700 font-bold text-sm hover:bg-green-50 transition-colors shadow-md"
-              >
-                <PlusCircle className="w-4 h-4" />
-                Post a Task
-              </button>
-              <button
-                onClick={() => navigate("/login")}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border-2 border-white/50 text-white font-semibold text-sm hover:border-white hover:bg-white/10 transition-colors"
-              >
-                Sign in to offer services
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          )}
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      {/* Thumbtack Pro Lead Match Feed Header vs. Client Marketplace Header */}
+      {isTaskerMode ? (
+        <div className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-teal-900 text-white py-12 border-b border-indigo-800/60">
+          <div className="max-w-6xl mx-auto px-4">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 border border-teal-400/30 text-xs font-bold uppercase tracking-wider mb-2">
+              <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
+              Thumbtack Pro Lead Match Feed
+            </span>
+            <h1 className="text-3xl md:text-4xl font-black mb-2">Browse Open Client Project Requests</h1>
+            <p className="text-indigo-200 text-base max-w-2xl">
+              Homeowners and businesses across Ethiopia have posted these projects. Submit your competitive bid or hourly quote to win the job.
+            </p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white py-12">
+          <div className="max-w-6xl mx-auto px-4">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold uppercase tracking-wider mb-2">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              Open Marketplace Projects
+            </span>
+            <h1 className="text-3xl md:text-4xl font-black mb-2">Explore Open Client Projects</h1>
+            <p className="text-slate-200 text-base max-w-2xl">
+              See what tasks people need done right now, or post your own custom request for free quotes.
+            </p>
+            {!user && (
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => navigate(createPageUrl("PostTask"))}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition-all"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  Request 3 Free Quotes
+                </button>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-white/40 text-white font-semibold text-sm hover:bg-white/10 transition-colors"
+                >
+                  Sign in to submit bids
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="max-w-6xl mx-auto px-4 -mt-6 pb-24 md:pb-8">
         {/* Search & Filters Card */}
