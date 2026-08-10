@@ -163,12 +163,12 @@ export default function MyTasks() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-24 md:pb-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-10">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white py-10">
         <div className="max-w-6xl mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-1">{t('myTasks.title')}</h1>
-          <p className="text-green-100 text-base">{t('myTasks.subtitle')}</p>
+          <h1 className="text-3xl font-black mb-1">{t('myTasks.title')}</h1>
+          <p className="text-slate-200 text-base">{t('myTasks.subtitle')}</p>
         </div>
       </div>
 

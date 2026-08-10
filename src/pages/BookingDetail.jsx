@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "@/api/firebaseClient";
 import { createPageUrl } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
+import { useAppMode } from "@/lib/AppModeContext";
 import { taskCategories } from "@/components/shared/CategoryBadge";
 import StarRating from "@/components/shared/StarRating";
 import LiveTrackingMap from "@/components/shared/LiveTrackingMap";
@@ -197,35 +198,62 @@ export default function BookingDetail() {
 
   const isTasker = user?.email === booking.tasker_email;
   const isClient = user?.email === booking.client_email;
+  const { isTaskerMode } = useAppMode();
   const cat = taskCategories.find(c => c.id === booking.service_type);
   const Icon = cat?.icon;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-8">
-        <div className="max-w-2xl mx-auto px-4">
-          <button
-            onClick={() => navigate(createPageUrl("MyBookings"))}
-            className="flex items-center gap-1.5 text-green-100 hover:text-white transition-colors mb-5 text-sm"
-          >
-            <ChevronLeft className="w-4 h-4" /> My Bookings
-          </button>
-          <div className="flex items-center gap-3">
-            {Icon && (
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${cat?.color || "bg-white/20 text-white"}`}>
-                <Icon className="w-5 h-5" />
+    <div className={`min-h-screen pb-24 md:pb-8 ${isTaskerMode ? "bg-slate-950 text-slate-100" : "bg-slate-50 dark:bg-slate-950"}`}>
+      {/* Dual Theme Header */}
+      {isTaskerMode ? (
+        <div className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-teal-900 text-white py-8 border-b border-indigo-800/60">
+          <div className="max-w-2xl mx-auto px-4">
+            <button
+              onClick={() => navigate(createPageUrl("MyBookings"))}
+              className="flex items-center gap-1.5 text-indigo-200 hover:text-white transition-colors mb-5 text-sm"
+            >
+              <ChevronLeft className="w-4 h-4" /> My Tasker Jobs
+            </button>
+            <div className="flex items-center gap-3">
+              {Icon && (
+                <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-300 flex items-center justify-center">
+                  <Icon className="w-5 h-5" />
+                </div>
+              )}
+              <div>
+                <h1 className="text-2xl font-black">{cat?.nameEn || booking.service_type}</h1>
+                <p className="text-indigo-200 text-sm mt-0.5">
+                  Requested by {booking.client_name}
+                </p>
               </div>
-            )}
-            <div>
-              <h1 className="text-2xl font-extrabold">{cat?.nameEn || booking.service_type}</h1>
-              <p className="text-green-100 text-sm mt-0.5">
-                {isTasker ? `Requested by ${booking.client_name}` : `Booked with ${booking.tasker_name}`}
-              </p>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white py-8">
+          <div className="max-w-2xl mx-auto px-4">
+            <button
+              onClick={() => navigate(createPageUrl("MyBookings"))}
+              className="flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors mb-5 text-sm"
+            >
+              <ChevronLeft className="w-4 h-4" /> My Bookings
+            </button>
+            <div className="flex items-center gap-3">
+              {Icon && (
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center">
+                  <Icon className="w-5 h-5" />
+                </div>
+              )}
+              <div>
+                <h1 className="text-2xl font-black">{cat?.nameEn || booking.service_type}</h1>
+                <p className="text-slate-200 text-sm mt-0.5">
+                  {isTasker ? `Requested by ${booking.client_name}` : `Booked with ${booking.tasker_name}`}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-2xl mx-auto px-4 -mt-4 space-y-4">
 

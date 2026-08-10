@@ -178,18 +178,18 @@ export default function BookTasker() {
   const availableServices = (tasker.skills || []).map(id => taskCategories.find(c => c.id === id)).filter(Boolean);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-24 md:pb-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-8">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white py-8">
         <div className="max-w-lg mx-auto px-4">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 text-green-100 hover:text-white transition-colors mb-5 text-sm"
+            className="flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors mb-5 text-sm"
           >
             <ChevronLeft className="w-4 h-4" /> Back
           </button>
-          <h1 className="text-2xl font-extrabold">Book a Tasker</h1>
-          <p className="text-green-100 text-sm mt-1">Fill in the details and send your request</p>
+          <h1 className="text-2xl font-black">Book a Tasker</h1>
+          <p className="text-slate-200 text-sm mt-1">Select date, time, and confirm escrow price protection</p>
         </div>
       </div>
 

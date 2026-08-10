@@ -171,31 +171,57 @@ export default function Profile() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 md:pb-6">
-      {/* Profile Header */}
-      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-10">
-        <div className="max-w-2xl mx-auto px-4">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center text-white text-2xl font-bold shadow-lg backdrop-blur-sm">
-              {(user.full_name || user.email || "?")[0].toUpperCase()}
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">{user.full_name || "No name set"}</h1>
-              <p className="text-green-100 text-sm">{user.email}</p>
-              <div className="flex items-center gap-2 mt-1">
-                {form.is_tasker && (
-                  <span className="inline-flex items-center gap-1 text-xs bg-white/20 text-white px-2 py-0.5 rounded-full border border-white/30">
-                    <Briefcase className="w-3 h-3" /> Tasker
-                  </span>
-                )}
-                {reviews.length > 0 && (
-                  <span className="text-xs text-green-100">{avgRating.toFixed(1)} ★ ({reviews.length} reviews)</span>
-                )}
+    <div className={`min-h-screen pb-24 md:pb-6 ${isTaskerMode ? "bg-slate-950 text-slate-100" : "bg-slate-50 dark:bg-slate-950"}`}>
+      {/* Profile Header (Dual Theme) */}
+      {isTaskerMode ? (
+        <div className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-teal-900 text-white py-10 border-b border-indigo-800/60">
+          <div className="max-w-2xl mx-auto px-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-teal-500/20 border-2 border-teal-400/40 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                {(user.full_name || user.email || "?")[0].toUpperCase()}
+              </div>
+              <div>
+                <h1 className="text-2xl font-black">{user.full_name || "No name set"}</h1>
+                <p className="text-indigo-200 text-sm">{user.email}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  {form.is_tasker && (
+                    <span className="inline-flex items-center gap-1 text-xs bg-teal-500/20 text-teal-300 px-2.5 py-0.5 rounded-full border border-teal-400/30">
+                      <Briefcase className="w-3 h-3" /> Verified Tasker Pro
+                    </span>
+                  )}
+                  {reviews.length > 0 && (
+                    <span className="text-xs text-indigo-200">{avgRating.toFixed(1)} ★ ({reviews.length} reviews)</span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white py-10">
+          <div className="max-w-2xl mx-auto px-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400/40 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                {(user.full_name || user.email || "?")[0].toUpperCase()}
+              </div>
+              <div>
+                <h1 className="text-2xl font-black">{user.full_name || "No name set"}</h1>
+                <p className="text-slate-200 text-sm">{user.email}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  {form.is_tasker && (
+                    <span className="inline-flex items-center gap-1 text-xs bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-400/30">
+                      <Briefcase className="w-3 h-3" /> Tasker Pro
+                    </span>
+                  )}
+                  {reviews.length > 0 && (
+                    <span className="text-xs text-slate-200">{avgRating.toFixed(1)} ★ ({reviews.length} reviews)</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-2xl mx-auto px-4 py-6">
 

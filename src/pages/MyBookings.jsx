@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "@/api/firebaseClient";
 import { createPageUrl } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
+import { useAppMode } from "@/lib/AppModeContext";
 import { taskCategories } from "@/components/shared/CategoryBadge";
 import { format } from "date-fns";
 import { Calendar, MapPin, ChevronRight, Briefcase, Search, Plus } from "lucide-react";
@@ -74,6 +75,7 @@ function BookingCard({ booking, currentUserEmail, onClick }) {
 export default function MyBookings() {
   const navigate = useNavigate();
   const { user: authUser, isLoadingAuth } = useAuth();
+  const { isTaskerMode } = useAppMode();
   const [user, setUser] = useState(null);
   const [clientBookings, setClientBookings] = useState([]);
   const [taskerBookings, setTaskerBookings] = useState([]);
@@ -124,29 +126,44 @@ export default function MyBookings() {
   const pendingCount = taskerBookings.filter(b => b.status === "pending_review").length;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
+    <div className={`min-h-screen pb-24 md:pb-8 ${isTaskerMode ? "bg-slate-950 text-slate-100" : "bg-slate-50 dark:bg-slate-950"}`}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-10">
-        <div className="max-w-2xl mx-auto px-4">
-          <h1 className="text-3xl font-extrabold mb-1">My Bookings</h1>
-          <p className="text-green-100">Track your scheduled services and jobs</p>
+      {isTaskerMode ? (
+        <div className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-teal-900 text-white py-10 border-b border-indigo-800/60">
+          <div className="max-w-2xl mx-auto px-4">
+            <h1 className="text-3xl font-black mb-1">My Tasker Jobs</h1>
+            <p className="text-indigo-200 text-base">Track incoming client bookings and your daily schedule</p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white py-10">
+          <div className="max-w-2xl mx-auto px-4">
+            <h1 className="text-3xl font-black mb-1">My Bookings</h1>
+            <p className="text-slate-200 text-base">Track your scheduled services and jobs</p>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-2xl mx-auto px-4 -mt-4">
         {/* Tabs */}
-        <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-1.5 flex mb-4">
+        <div className={`rounded-2xl shadow-md p-1.5 flex mb-4 border ${
+          isTaskerMode
+            ? "bg-slate-900 border-indigo-900/80"
+            : "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800"
+        }`}>
           <button
             onClick={() => setActiveTab("client")}
             className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${
               activeTab === "client"
-                ? "bg-green-700 text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-900"
+                ? isTaskerMode
+                  ? "bg-indigo-700 text-white shadow-sm"
+                  : "bg-emerald-600 text-white shadow-sm"
+                : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             My Bookings
             {clientBookings.length > 0 && (
-              <span className={`ml-1.5 text-xs ${activeTab === "client" ? "text-green-200" : "text-gray-400"}`}>
+              <span className={`ml-1.5 text-xs ${activeTab === "client" ? "text-white" : "text-slate-400"}`}>
                 ({clientBookings.length})
               </span>
             )}
@@ -156,14 +173,16 @@ export default function MyBookings() {
               onClick={() => setActiveTab("tasker")}
               className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all relative ${
                 activeTab === "tasker"
-                  ? "bg-green-700 text-white shadow-sm"
-                  : "text-gray-500 hover:text-gray-900"
+                  ? isTaskerMode
+                    ? "bg-indigo-700 text-white shadow-sm"
+                    : "bg-emerald-600 text-white shadow-sm"
+                  : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               <Briefcase className="w-3.5 h-3.5 inline mr-1" />
               My Jobs
               {taskerBookings.length > 0 && (
-                <span className={`ml-1.5 text-xs ${activeTab === "tasker" ? "text-green-200" : "text-gray-400"}`}>
+                <span className={`ml-1.5 text-xs ${activeTab === "tasker" ? "text-white" : "text-slate-400"}`}>
                   ({taskerBookings.length})
                 </span>
               )}
@@ -178,27 +197,33 @@ export default function MyBookings() {
 
         {/* Booking list */}
         {activeBookings.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
+          <div className={`rounded-2xl border shadow-sm p-10 text-center ${
+            isTaskerMode ? "bg-slate-900 border-indigo-900/80" : "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800"
+          }`}>
             {activeTab === "client" ? (
               <>
-                <Search className="w-12 h-12 text-gray-200 mx-auto mb-4" />
-                <h3 className="font-bold text-gray-900 mb-2">No bookings yet</h3>
-                <p className="text-sm text-gray-500 mb-6">Find a Tasker and book your first service</p>
+                <Search className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+                <h3 className="font-bold text-slate-900 dark:text-white mb-2">No bookings yet</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Find a Tasker and book your first service</p>
                 <button
                   onClick={() => navigate("/")}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-green-700 text-white font-bold text-sm hover:bg-green-800 transition-colors"
+                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-white font-bold text-sm shadow-md transition-colors ${
+                    isTaskerMode ? "bg-teal-600 hover:bg-teal-700" : "bg-emerald-600 hover:bg-emerald-700"
+                  }`}
                 >
                   <Search className="w-4 h-4" /> Browse Taskers
                 </button>
               </>
             ) : (
               <>
-                <Briefcase className="w-12 h-12 text-gray-200 mx-auto mb-4" />
-                <h3 className="font-bold text-gray-900 mb-2">No job requests yet</h3>
-                <p className="text-sm text-gray-500 mb-6">Make sure your profile is complete so clients can find you</p>
+                <Briefcase className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+                <h3 className="font-bold text-slate-900 dark:text-white mb-2">No job requests yet</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Make sure your profile is complete so clients can find you</p>
                 <button
                   onClick={() => navigate(createPageUrl("Profile"))}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-green-700 text-white font-bold text-sm hover:bg-green-800 transition-colors"
+                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-white font-bold text-sm shadow-md transition-colors ${
+                    isTaskerMode ? "bg-teal-600 hover:bg-teal-700" : "bg-emerald-600 hover:bg-emerald-700"
+                  }`}
                 >
                   Update Profile
                 </button>

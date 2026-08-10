@@ -232,12 +232,12 @@ export default function BrowseTaskers() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Hero */}
-      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-12">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white py-12">
         <div className="max-w-6xl mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Find Skilled Taskers Near You</h1>
-          <p className="text-green-100 text-lg mb-6">Browse professionals, book directly, get the job done.</p>
+          <h1 className="text-3xl md:text-4xl font-black mb-2">Find Skilled Taskers Near You</h1>
+          <p className="text-slate-200 text-lg mb-6">Browse verified professionals, book directly at upfront hourly rates.</p>
 
           <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
             <div className="relative flex-1">

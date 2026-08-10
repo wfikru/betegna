@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "@/lib/NotificationContext";
+import { useAppMode } from "@/lib/AppModeContext";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +12,7 @@ import { format } from "date-fns";
 export default function Notifications() {
   const navigate = useNavigate();
   const { notifications, loading, markAsRead, markAllAsRead } = useNotifications();
+  const { isTaskerMode } = useAppMode();
 
   const getNotificationIcon = (type) => {
     switch (type) {
@@ -78,14 +80,23 @@ export default function Notifications() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 md:pb-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-10">
-        <div className="max-w-2xl mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-1">Notifications</h1>
-          <p className="text-green-100 text-base">Stay updated on your tasks and offers</p>
+    <div className={`min-h-screen pb-24 md:pb-6 ${isTaskerMode ? "bg-slate-950 text-slate-100" : "bg-slate-50 dark:bg-slate-950"}`}>
+      {/* Dual Theme Header */}
+      {isTaskerMode ? (
+        <div className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-teal-900 text-white py-10 border-b border-indigo-800/60">
+          <div className="max-w-2xl mx-auto px-4">
+            <h1 className="text-3xl font-black mb-1">Tasker Notifications</h1>
+            <p className="text-indigo-200 text-base">Stay updated on incoming lead requests and quote acceptances</p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white py-10">
+          <div className="max-w-2xl mx-auto px-4">
+            <h1 className="text-3xl font-black mb-1">Notifications</h1>
+            <p className="text-slate-200 text-base">Stay updated on your home projects and quotes</p>
+          </div>
+        </div>
+      )}
 
     <div className="max-w-2xl mx-auto px-4 py-6">
 

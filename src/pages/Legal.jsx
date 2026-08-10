@@ -2,23 +2,43 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText, Shield } from "lucide-react";
+import { useAppMode } from "@/lib/AppModeContext";
 
 export default function Legal() {
   const navigate = useNavigate();
+  const { isTaskerMode } = useAppMode();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 pb-24 md:pb-6">
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-1 text-gray-500 hover:text-gray-700 text-sm mb-4"
-      >
-        <ArrowLeft className="w-4 h-4" /> Back
-      </button>
+    <div className={`min-h-screen pb-24 md:pb-8 ${isTaskerMode ? "bg-slate-950 text-slate-100" : "bg-slate-50 dark:bg-slate-950"}`}>
+      {isTaskerMode ? (
+        <div className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-teal-900 text-white py-10 border-b border-indigo-800/60">
+          <div className="max-w-4xl mx-auto px-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-1 text-indigo-200 hover:text-white text-sm mb-3"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back
+            </button>
+            <h1 className="text-3xl font-black mb-1">Legal Information</h1>
+            <p className="text-indigo-200 text-base">Tasker Pro terms of service & privacy policies</p>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white py-10">
+          <div className="max-w-4xl mx-auto px-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-1 text-slate-300 hover:text-white text-sm mb-3"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back
+            </button>
+            <h1 className="text-3xl font-black mb-1">Legal Information</h1>
+            <p className="text-slate-200 text-base">Our policies and terms of service</p>
+          </div>
+        </div>
+      )}
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Legal Information</h1>
-        <p className="text-gray-500 text-sm">Our policies and terms of service</p>
-      </div>
+      <div className="max-w-4xl mx-auto px-4 py-6">
 
       <div className="space-y-4">
         <Card className="border border-gray-100">
@@ -139,6 +159,7 @@ export default function Legal() {
             </p>
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );

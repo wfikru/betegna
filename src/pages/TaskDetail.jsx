@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { api, db } from "@/api/firebaseClient";
 import { createPageUrl } from "@/utils";
 import { useNavigate } from "react-router-dom";
+import { useAppMode } from "@/lib/AppModeContext";
 import { Button } from "@/components/ui/button";
 import { writeBatch, doc } from "firebase/firestore";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,6 +29,7 @@ const statusConfig = {
 
 export default function TaskDetail() {
   const navigate = useNavigate();
+  const { isTaskerMode } = useAppMode();
   const urlParams = new URLSearchParams(window.location.search);
   const taskId = urlParams.get("id");
 
@@ -336,19 +338,33 @@ export default function TaskDetail() {
   const s = statusConfig[task.status] || statusConfig.open;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 md:pb-6">
-      {/* Page Header */}
-      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white py-6">
-        <div className="max-w-2xl mx-auto px-4">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-green-100 hover:text-white text-sm mb-3 transition-colors">
-            <ChevronLeft className="w-4 h-4" /> Back
-          </button>
-          <div className="flex items-center gap-3">
-            <span className={`text-xs px-2.5 py-1 rounded-full font-semibold bg-white/20 text-white border border-white/30`}>{s.text}</span>
+    <div className={`min-h-screen pb-24 md:pb-6 ${isTaskerMode ? "bg-slate-950 text-slate-100" : "bg-slate-50 dark:bg-slate-950"}`}>
+      {/* Page Header (Dual Theme) */}
+      {isTaskerMode ? (
+        <div className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-teal-900 text-white py-6 border-b border-indigo-800/60">
+          <div className="max-w-2xl mx-auto px-4">
+            <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-indigo-200 hover:text-white text-sm mb-3 transition-colors">
+              <ChevronLeft className="w-4 h-4" /> Back to Thumbtack Lead Match Feed
+            </button>
+            <div className="flex items-center gap-3">
+              <span className="text-xs px-2.5 py-1 rounded-full font-bold bg-teal-500/20 text-teal-300 border border-teal-400/30 uppercase">{s.text}</span>
+            </div>
+            <h1 className="text-2xl font-black mt-2 leading-tight">{task.title}</h1>
           </div>
-          <h1 className="text-2xl font-bold mt-2 leading-tight">{task.title}</h1>
         </div>
-      </div>
+      ) : (
+        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white py-6">
+          <div className="max-w-2xl mx-auto px-4">
+            <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-slate-300 hover:text-white text-sm mb-3 transition-colors">
+              <ChevronLeft className="w-4 h-4" /> Back
+            </button>
+            <div className="flex items-center gap-3">
+              <span className="text-xs px-2.5 py-1 rounded-full font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 uppercase">{s.text}</span>
+            </div>
+            <h1 className="text-2xl font-black mt-2 leading-tight">{task.title}</h1>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-2xl mx-auto px-4 py-4">
       {/* Task Header */}

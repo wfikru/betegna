@@ -78,13 +78,13 @@ export default function TaskerProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-28 md:pb-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-28 md:pb-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-700 to-green-600 text-white pt-6 pb-16">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white pt-6 pb-16">
         <div className="max-w-2xl mx-auto px-4">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 text-green-100 hover:text-white transition-colors mb-6 text-sm font-medium"
+            className="flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors mb-6 text-sm font-medium"
           >
             <ChevronLeft className="w-4 h-4" />
             Back
