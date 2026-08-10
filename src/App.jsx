@@ -11,6 +11,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Notifications from './pages/Notifications';
 import BrowseTaskers from './pages/BrowseTaskers';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { AppModeProvider } from '@/lib/AppModeContext';
 import { NotificationProvider } from '@/lib/NotificationContext';
 import { MessageProvider } from '@/lib/MessageContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -88,16 +89,18 @@ function App() {
 
   return (
     <AuthProvider>
-      <NotificationProvider>
-        <MessageProvider>
-          <QueryClientProvider client={queryClientInstance}>
-            <Router>
-              <AuthenticatedApp />
-            </Router>
-            <Toaster />
-          </QueryClientProvider>
-        </MessageProvider>
-      </NotificationProvider>
+      <AppModeProvider>
+        <NotificationProvider>
+          <MessageProvider>
+            <QueryClientProvider client={queryClientInstance}>
+              <Router>
+                <AuthenticatedApp />
+              </Router>
+              <Toaster />
+            </QueryClientProvider>
+          </MessageProvider>
+        </NotificationProvider>
+      </AppModeProvider>
     </AuthProvider>
   )
 }

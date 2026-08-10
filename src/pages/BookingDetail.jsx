@@ -5,6 +5,7 @@ import { createPageUrl } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
 import { taskCategories } from "@/components/shared/CategoryBadge";
 import StarRating from "@/components/shared/StarRating";
+import LiveTrackingMap from "@/components/shared/LiveTrackingMap";
 import { format } from "date-fns";
 import {
   ChevronLeft, Calendar, MapPin, Clock, DollarSign, MessageCircle,
@@ -230,6 +231,18 @@ export default function BookingDetail() {
 
         {/* Status timeline */}
         <StatusTimeline status={booking.status} />
+
+        {/* Real-Time Live Tracking Map View (Animated Route Progress) */}
+        {(booking.status === "accepted" || booking.status === "en_route" || booking.status === "in_progress") && (
+          <LiveTrackingMap
+            booking={booking}
+            taskerName={booking.tasker_name || "Dawit Abebe"}
+            taskerPhoto={booking.tasker_photo}
+            status={booking.status === "in_progress" ? "in_progress" : "en_route"}
+            onOpenChat={() => navigate(createPageUrl("Messages") + `?id=${booking.id}`)}
+            onCallTasker={() => alert("Connecting to Twilio Masked Phone Proxy... (Anonymized VoIP)")}
+          />
+        )}
 
         {/* Tasker/Client action buttons */}
         {isTasker && booking.status === "pending_review" && (
