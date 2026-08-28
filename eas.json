@@ -1,0 +1,23 @@
+{
+  "cli": { "version": ">= 13.0.0", "appVersionSource": "remote" },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": { "EXPO_PUBLIC_BACKEND_MODE": "firebase" }
+    },
+    "staging": {
+      "distribution": "internal",
+      "channel": "staging",
+      "env": { "EXPO_PUBLIC_BACKEND_MODE": "firebase" }
+    },
+    "production": {
+      "channel": "production",
+      "autoIncrement": true,
+      "env": { "EXPO_PUBLIC_BACKEND_MODE": "firebase" }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

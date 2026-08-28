@@ -1,41 +1,25 @@
-#env
-.env
-.env.*
-
-# Logs
-logs
+node_modules/
+.expo/
+dist/
+web-build/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+*.tsbuildinfo
 
+# env
 .env
-scripts
+.env.local
+.env.*.local
 
-# Release artifacts
-*.ipa
-*.aab
-ios/App-debug.zip
+# firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+functions/node_modules/
+functions/lib/
 
-# Xcode local build output
-ios/build/
-ios/build-release/
-ios/Payload/
+# testing
+coverage/
+
+# @generated expo public dir
+public/

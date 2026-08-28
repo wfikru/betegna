@@ -1,166 +1,104 @@
-**Welcome to your Firebase-backed project**
+# Betegna ቤተኛ — Professional Services Marketplace
 
-This repository contains a React + Vite application configured to use Firebase
-Firestore for data storage and Firebase Authentication for user accounts.
+**"Tell us what you need — we will get it done."**
 
-You can run and modify the app locally; changes are not tied to an external
-builder service.
+A production-quality, next-generation local-services marketplace for **Ethiopia** (ETB, Addis Ababa sub-cities, English + አማርኛ). Customers describe what they need in plain language; the platform understands the request, asks only relevant questions, matches the best **verified professionals**, and runs the whole relationship in chat — quotes, scheduling, booking, completion and review.
 
-The Firebase client is configured in `src/lib/firebase.js` which reads
-environment variables (defined in `.env.local`). The web code and the
-`src/api/firebaseClient.js` helper both import from there, so there’s a
-single place to control the SDK initialization.
+Built as **one React Native + Expo + TypeScript codebase** → iOS + Android (+ web preview) with a **Firebase** backend.
 
-### Seeding Firestore with the Admin SDK
+---
 
-If you prefer to create the collections programmatically (for CI or
-initial setup) there’s a small Node script included at
-`scripts/seedFirestore.cjs` (CommonJS script).  It uses the Firebase Admin SDK and requires a
-service account key JSON:
+## What's inside (v4 — complete rewrite)
 
-```bash
-# download service account JSON from the Firebase console and
-# either place it next to this script or set SERVICE_ACCOUNT_PATH
-node scripts/seedFirestore.cjs
-```
+| Area | Highlights |
+|---|---|
+| **Request-driven core** | Natural-language home ("I need a plumber tomorrow in Bole"), AI-ready rule-based intent parser, dynamic per-service questionnaires (Typeform-style, one question per screen) |
+| **Matching engine** | Configurable weighted scoring (service 30 / location 20 / availability 12 / rating 12 / responsiveness 10 / performance 6 / experience 6 / price 4), mirrored server-side in Cloud Functions |
+| **Real-time chat** | Quotes, appointment proposals, booking events and system messages inside the thread; typing indicators, read receipts, unread counts, simulated pro intelligence in demo mode |
+| **Quotes → Booking → Job** | Structured quotes (labor/materials/fees, discount, VAT, expiry, proposed slot), accept-in-chat, transactional booking creation, job timeline, completion |
+| **Professional workspace** | Lead pipeline (new → contacted → quoted → won/lost), quote composer with live totals, calendar + working-hours editor, services/pricing/portfolio/service-area editor, profile strength |
+| **Dual-role account** | One account, two modes (Customer ⇄ Professional) — switch instantly from Profile |
+| **Notifications** | Notification center with category filters, deep links (`betegna://request/:id` …), preferences (per-channel & per-kind), FCM wiring via Cloud Functions |
+| **Reviews & reputation** | 6-dimension reviews, Bayesian reputation blending so new pros aren't buried, professional responses |
+| **Payments — Telebirr + Cash** | Provider-agnostic PaymentService (adapter registry on client & Functions): Telebirr escrow (signed H5 order + webhook), cash ledger, release-on-completion, payment history |
+| **Trust & safety** | Firestore security rules (role-scoped access, server-only writes for money/leads/notifications), privacy-preserving chat, report/block hooks |
+| **i18n** | Full English + አማርኛ (Amharic) UI |
+| **Design system** | Original premium token system (deep green + gold), light/dark themes, accessibility labels, skeletons & empty states everywhere |
 
-The script will create `tasks`, `taskOffers`, `reviews` and `users`
-collections with a single empty document each.  You can modify it to insert
-real sample data or extend it for additional entities.
-
-#### Data models
-
-JSON schema files now live under `src/entities` (moved there from the
-repository root) and describe the expected properties for each collection
-(Task, TaskOffer, Review and User).  These schemas are handy for reference,
-and they’re also the source for the TypeScript interfaces generated in
-`src/types/entities.d.ts`.
-The front‑end code uses those interfaces via JSDoc comments – state hooks in
-`src/pages` and the API client are annotated with the appropriate types.
-Feel free to update the schemas and corresponding interfaces as the
-project evolves.
-
-
-For native Android/iOS builds the downloaded configuration files
-(`google-services.json` and `GoogleService-Info.plist`) must live in the
-respective platform directories (`android/app/` and `ios/Runner/`).
-
-**Prerequisites:** 
-
-1. Clone the repository using the project's Git URL 
-2. Navigate to the project directory
-3. Install dependencies: `npm install` (this also installs the `firebase-admin` package used by the seeding script)
-4. Set up a Firebase project (you already have one) and enable Firestore and Authentication (email/password or anonymous)
-5. Create an `.env.local` file with your Firebase SDK configuration:
-
-```
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=...
-VITE_FIREBASE_APP_ID=...
-```
-
-You can find these values in the Firebase console under project settings.
-
-Run the app: `npm run dev`
-
-After starting the development server open the browser at `http://localhost:5173` (or the port shown by Vite).  
-
-### Mobile development (Capacitor)
-
-Build + sync native projects:
+## Quick start
 
 ```bash
-npm run cap:sync
+npm install
+
+# Demo backend — zero credentials, seeded Ethiopian marketplace, simulated pros
+npm start                 # Expo dev server (iOS/Android/web)
+
+# Web production bundle
+npm run export:web
+
+# Quality gates
+npm run typecheck         # tsc --noEmit (strict)
+npm test                  # Jest unit tests (matching, NL parser, quote math, questionnaire)
 ```
 
-Open native projects:
+**Demo mode is on by default** (`EXPO_PUBLIC_BACKEND_MODE=demo`, see `.env.example`). Sign in with any email — try `demo@betegna.app` / any password. Matched professionals reply in chat and send quotes automatically, so the full marketplace loop is explorable without a backend.
 
-```bash
-npm run cap:android
-npm run cap:ios
+### Switching to Firebase
+
+1. Copy `.env.example` → `.env` and fill `EXPO_PUBLIC_FIREBASE_*` from your Firebase console.
+2. Set `EXPO_PUBLIC_BACKEND_MODE=firebase`.
+3. Deploy rules, indexes and functions: `firebase deploy --only firestore:rules,firestore:indexes,functions`.
+4. Seed taxonomy (`categories`, `services`, `serviceQuestions`) & `professionals` — the seed data in `src/config/seed/` mirrors those documents 1:1.
+
+## Project structure
+
+```
+src/
+├── app/            # navigation (role-based shells, deep links) & providers
+├── components/     # common UI kit, cards, chat, booking, forms
+├── screens/
+│   ├── auth/       # Welcome, Login, SignUp, Forgot
+│   ├── customer/   # Home (NL search), Requests, RequestWizard, Matching,
+│   │               # RequestDetail, ProProfile, ReviewComposer, Favorites
+│   ├── professional/ # Dashboard, Leads, LeadDetail, QuoteComposer,
+│   │                 # Calendar (availability), ProfileEdit
+│   └── shared/     # ChatList, ChatThread, Notifications, Profile, BookingDetail
+├── features/       # pure business logic (matching, NL parser, questionnaire,
+│                   # quote math, lifecycle, reputation) — unit-tested, UI-free
+├── services/       # service layer: demo backend ⇄ Firebase behind one API
+├── state/          # Theme & Auth contexts
+├── models/         # domain types (mirrors Firestore schema)
+├── config/         # brand, env, theme tokens, seed taxonomy & professionals
+├── i18n/           # en / am dictionaries
+├── constants/      # sub-cities & coordinates, status maps
+└── utils/          # money/date/geo/validation helpers
+functions/          # Cloud Functions (fan-out, notifications, booking tx, reputation)
+firestore.rules     # role-scoped security rules
+docs/               # architecture, PRD, schema, roadmap
 ```
 
-Live Reload (Expo Go-like workflow):
+## Scripts
 
-1. Start dev server on LAN:
+| Command | Purpose |
+|---|---|
+| `npm start` | Expo dev server (all platforms) |
+| `npm run export:web` | Static web bundle in `dist/` |
+| `npm run typecheck` | Strict TypeScript check |
+| `npm test` | Unit tests |
+| `npm run deploy:rules` | Deploy Firestore rules + indexes (needs firebase-cli) |
 
-```bash
-npm run dev:host
-```
+## Documentation
 
-2. In another terminal, run one target:
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — system design, layers, security, offline, deep links
+- [docs/PRD.md](docs/PRD.md) — product vision, personas, journeys, MVP boundary
+- [docs/FIRESTORE_SCHEMA.md](docs/FIRESTORE_SCHEMA.md) — collections, indexes, query patterns
+- [docs/NAVIGATION_AND_SCREENS.md](docs/NAVIGATION_AND_SCREENS.md) — sitemap, screen inventory
+- [docs/MATCHING_AND_SEARCH.md](docs/MATCHING_AND_SEARCH.md) — matching weights, NL grammar, AI roadmap
+- [docs/PAYMENTS.md](docs/PAYMENTS.md) — Telebirr + Cash provider-agnostic payment architecture
+- [docs/ROADMAP.md](docs/ROADMAP.md) — phase plan & deferred features
 
-```bash
-npm run cap:android:live
-npm run cap:ios:live
-```
+## Branch
 
-Notes:
+`v4-react-native-rewrite` — complete rewrite of the previous React/Vite/Capacitor app. The legacy web app remains available on the `Capacitor`, `v2-dual-mode-redesign` and `v3-taskrabbit-thumbtack-redesign` branches.
 
-- Keep laptop and device/emulator on the same network.
-- Live Reload is best for fast iteration; use `npm run cap:sync` before release testing.
-
-### Cloud device testing (Firebase Test Lab)
-
-Test your app on real devices in the cloud:
-
-**Prerequisites:**
-- Android Studio installed
-- Google Cloud SDK installed and authenticated
-- Firebase Test Lab APIs enabled
-- Billing enabled (free tier: 10 physical device tests/day)
-
-**Steps:**
-
-1. Build APK in Android Studio:
-   - Open project: `npm run cap:android`
-   - Build → Build Bundle(s) / APK(s) → Build APK(s)
-   - APK will be at `android/app/build/outputs/apk/debug/app-debug.apk`
-
-2. View available test devices:
-```bash
-npm run testlab:devices
-```
-
-3. Run automated tests on real devices:
-```bash
-npm run testlab:robo
-```
-
-Results are viewable in the Firebase Console with screenshots, logs, and video recordings.
-
-**Note:** Firebase authentication is now active. Users can sign in using email/password or the **Continue with Google** button available on the login screen.
-
-**Setting up Google Sign-In:**
-
-1. Go to **[Firebase Console](https://console.firebase.google.com)** → your project
-2. Select **Authentication** → **Settings** tab
-3. Scroll to **Authorized domains** and add:
-   - `localhost`
-   - `127.0.0.1:5173` (or the port Vite uses)
-   - Any deployed domains (e.g., `yourdomain.com`)
-4. Go to **Authentication** → **Sign-in method** and ensure **Google** is enabled
-
-If you see *"Access blocked: This app's request is invalid"*, it means the domain is not authorized yet. Follow steps 3–4 above.
-
-The application uses the following Firestore collections – create them in your Firebase console or let them be created automatically when you perform actions:
-
-- `tasks` (documents representing task postings)
-- `taskOffers` (offers made on tasks)
-- `reviews` (feedback between users)
-- `users` (additional profile fields beyond Firebase Auth)
-
-Authentication rules:
-
-- Anyone (even unauthenticated visitors) can browse tasks; the home page always shows open tasks from all users.
-- Trying to **post a task** or visit the **Profile** page redirects unauthenticated users to the login screen.
-- The navigation bar displays a **Logout** button when signed in; it signs the user out and returns to the login page.
-
-Fields are stored verbatim as shown in the UI code. You can read/write directly via the Firestore web console for inspection.
-
-**Docs & Support**
-
-For Firebase setup and Firestore documentation: [https://firebase.google.com/docs](https://firebase.google.com/docs)
+> Inspired by the marketplace category leaders — but an original product: simpler than a directory, powered by a sophisticated matching backend.

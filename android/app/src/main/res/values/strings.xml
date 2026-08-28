@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">Betegna</string>
-    <string name="title_activity_main">Betegna</string>
-    <string name="package_name">com.betegna.app</string>
-    <string name="custom_url_scheme">com.betegna.app</string>
-</resources>

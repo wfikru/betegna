@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Betegna",
+    "slug": "betegna",
+    "version": "4.0.0",
+    "scheme": "betegna",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B5D3B"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.betegna.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Betegna uses your location to match you with nearby professionals.",
+        "NSPhotoLibraryUsageDescription": "Betegna lets you attach photos to service requests and chat.",
+        "NSCameraUsageDescription": "Betegna lets you take photos for service requests."
+      },
+      "associatedDomains": ["applinks:betegna.app"]
+    },
+    "android": {
+      "package": "com.betegna.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0B5D3B"
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [{ "scheme": "https", "host": "betegna.app", "pathPrefix": "/" }],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "CAMERA", "READ_EXTERNAL_STORAGE"]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [["expo-image-picker", { "photoSelectionPermission": "Allow Betegna to access your photos." }]],
+    "extra": {
+      "eas": { "projectId": "" }
+    }
+  }
+}
